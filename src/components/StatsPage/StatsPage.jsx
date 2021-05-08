@@ -10,7 +10,7 @@ export default function StatsPage (props) {
     <div>
       <h1>My Stats Page</h1>
       <h2>Tasks</h2>
-      <TaskStatsTable />
+      <TaskStatsTable tasks={tasks}/>
       <h2>Agents</h2>
     </div>
   );
