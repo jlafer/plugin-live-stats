@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 
 import {
   SET_CURRENT_TASK, SET_SERVERLESS_URI, SET_SYNC_TOKEN,
-  SET_STATS_PAGE_STATE
+  SET_STATS_PAGE_STATE, INITIATE_TASK_STATS, UPDATE_TASK_STATS, REMOVE_TASK_STATS
 } from './actions';
 import appStateReducer from "./AppState";
 import pageStateReducer from "./PageState";
@@ -27,7 +27,18 @@ export const setCurrentTask = (payload) => ({
   type: SET_CURRENT_TASK, payload
 });
 
-// a sample Redux action creator
+export const initiateTaskStats = (items) => ({
+  type: INITIATE_TASK_STATS, payload: items
+});
+
+export const updateTaskStats = (key, value) => ({
+  type: UPDATE_TASK_STATS, payload: {key, value}
+});
+
+export const removeTaskStats = (key) => ({
+  type: REMOVE_TASK_STATS, payload: {key}
+});
+
 export const setStatsPageState = (payload) => ({
   type: SET_STATS_PAGE_STATE, payload
 });
