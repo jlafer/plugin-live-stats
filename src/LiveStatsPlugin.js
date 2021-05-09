@@ -6,7 +6,7 @@ import StatsPage from "./components/StatsPage/StatsPageContainer";
 import SidebarStatsButton from './components/SidebarStatsButton/SidebarStatsButton';
 import reducers, {namespace, setServerlessUri} from './states';
 import {initLiveQuery} from './helpers';
-import {initialTasksCB, updateTaskCB, removeTaskCB} from './statsMgmt';
+import {initialTasksCB, updateTaskCB, removeTaskCB, initialWorkersCB, updateWorkerCB, removeWorkerCB} from './statsMgmt';
 
 const PLUGIN_NAME = 'LiveStatsPlugin';
 
@@ -23,10 +23,13 @@ export default class TemplatePlugin extends FlexPlugin {
     console.log(`${PLUGIN_NAME}: serverless uri = ${serverlessUri}`);
     store.dispatch( setServerlessUri(serverlessUri) );
 
-    /* initLiveQuery(
+    initLiveQuery(
       manager,
-      {index: 'tr-worker', query: '', initialWorkersCB, updateWorkerCB, removeWorkerCB}
-    ); */
+      {
+        index: 'tr-worker', query: '',
+        initialCB: initialWorkersCB, updateCB: updateWorkerCB, removeCB: removeWorkerCB
+      }
+    );
     initLiveQuery(
       manager,
       {

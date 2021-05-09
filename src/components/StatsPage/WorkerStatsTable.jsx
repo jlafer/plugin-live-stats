@@ -15,24 +15,24 @@ const useStyles = makeStyles({
   },
 });
 
-function TaskStatsRow(props) {
+function WorkerStatsRow(props) {
   const {data} = props;
-  const {task_sid, queue_name, channel_type, worker_name} = data;
+  const {worker_sid, activity_name, attributes} = data;
+  const {full_name} = attributes;
   return (
   <TableRow>
     <TableCell component="th" scope="row">
-      {task_sid}
+      {worker_sid}
     </TableCell>
-    <TableCell align="right">{queue_name}</TableCell>
-    <TableCell align="right">{channel_type}</TableCell>
-    <TableCell align="right">{worker_name}</TableCell>
+    <TableCell align="right">{full_name}</TableCell>
+    <TableCell align="right">{activity_name}</TableCell>
   </TableRow>
   )
 }
 
 export default function BasicTable(props) {
-  const {tasks} = props;
-  const rows = R.values(tasks);
+  const {workers} = props;
+  const rows = R.values(workers);
 
   const classes = useStyles();
 
@@ -41,14 +41,13 @@ export default function BasicTable(props) {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Task SID</TableCell>
-            <TableCell align="right">Queue</TableCell>
-            <TableCell align="right">Channel</TableCell>
-            <TableCell align="right">Agent</TableCell>
+            <TableCell>Worker SID</TableCell>
+            <TableCell align="right">Name</TableCell>
+            <TableCell align="right">Activity</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => <TaskStatsRow data={row} key={row.task_sid} />) }
+          {rows.map((row) => <WorkerStatsRow data={row} key={row.worker_sid} />) }
         </TableBody>
       </Table>
     </TableContainer>

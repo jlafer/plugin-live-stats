@@ -2,7 +2,9 @@ import { combineReducers } from 'redux';
 
 import {
   SET_CURRENT_TASK, SET_SERVERLESS_URI, SET_SYNC_TOKEN,
-  SET_STATS_PAGE_STATE, INITIATE_TASK_STATS, UPDATE_TASK_STATS, REMOVE_TASK_STATS
+  SET_STATS_PAGE_STATE,
+  INITIATE_TASK_STATS, UPDATE_TASK_STATS, REMOVE_TASK_STATS,
+  INITIATE_WORKER_STATS, UPDATE_WORKER_STATS, REMOVE_WORKER_STATS
 } from './actions';
 import appStateReducer from "./AppState";
 import pageStateReducer from "./PageState";
@@ -37,6 +39,18 @@ export const updateTaskStats = (key, value) => ({
 
 export const removeTaskStats = (key) => ({
   type: REMOVE_TASK_STATS, payload: {key}
+});
+
+export const initiateWorkerStats = (items) => ({
+  type: INITIATE_WORKER_STATS, payload: items
+});
+
+export const updateWorkerStats = (key, value) => ({
+  type: UPDATE_WORKER_STATS, payload: {key, value}
+});
+
+export const removeWorkerStats = (key) => ({
+  type: REMOVE_WORKER_STATS, payload: {key}
 });
 
 export const setStatsPageState = (payload) => ({

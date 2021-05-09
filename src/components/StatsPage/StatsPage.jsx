@@ -2,6 +2,7 @@ import React from "react";
 
 import "./StatsPage.css";
 import TaskStatsTable from './TaskStatsTable';
+import WorkerStatsTable from './WorkerStatsTable';
 
 export default function StatsPage (props) {
   const {pageState} = props;
@@ -12,6 +13,7 @@ export default function StatsPage (props) {
       <h2>Tasks</h2>
       <TaskStatsTable tasks={tasks}/>
       <h2>Agents</h2>
+      <WorkerStatsTable workers={workers}/>
     </div>
   );
 }
