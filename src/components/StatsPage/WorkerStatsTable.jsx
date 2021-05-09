@@ -17,15 +17,18 @@ const useStyles = makeStyles({
 
 function WorkerStatsRow(props) {
   const {data} = props;
-  const {worker_sid, activity_name, attributes} = data;
-  const {full_name} = attributes;
+  const {worker_sid, activity_name, activityAge, attributes} = data;
+  const {full_name, routing} = attributes;
+  const skills = (routing && routing.skills) ? routing.skills : [];
+  const skillsStr = skills.join(', ');
   return (
   <TableRow>
     <TableCell component="th" scope="row">
-      {worker_sid}
+      {full_name}
     </TableCell>
-    <TableCell align="right">{full_name}</TableCell>
     <TableCell align="right">{activity_name}</TableCell>
+    <TableCell align="right">{activityAge}</TableCell>
+    <TableCell align="right">{skillsStr}</TableCell>
   </TableRow>
   )
 }
@@ -41,9 +44,10 @@ export default function BasicTable(props) {
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Worker SID</TableCell>
-            <TableCell align="right">Name</TableCell>
+            <TableCell>Name</TableCell>
             <TableCell align="right">Activity</TableCell>
+            <TableCell align="right">Activity Time</TableCell>
+            <TableCell align="right">Skills</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
