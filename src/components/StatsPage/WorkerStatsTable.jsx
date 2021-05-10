@@ -15,10 +15,17 @@ const useStyles = makeStyles({
   },
 });
 
+const formatTask = task => {
+  const {age, queue_name, attributes: taskAttrs} = task;
+  const {channelType, from} = taskAttrs;
+  return `${channelType} from ${from} via ${queue_name} [${age} secs]`;
+}
 function WorkerStatsRow(props) {
   const {data} = props;
-  const {worker_sid, activity_name, activityAge, attributes} = data;
+  const {activity_name, activityAge, attributes, tasks} = data;
   const {full_name, routing} = attributes;
+  const tasksFrmtd = R.values(tasks).map(formatTask);
+  const tasksStr = tasksFrmtd.join('; ');
   const skills = (routing && routing.skills) ? routing.skills : [];
   const skillsStr = skills.join(', ');
   return (
@@ -28,6 +35,7 @@ function WorkerStatsRow(props) {
     </TableCell>
     <TableCell align="right">{activity_name}</TableCell>
     <TableCell align="right">{activityAge}</TableCell>
+    <TableCell align="right">{tasksStr}</TableCell>
     <TableCell align="right">{skillsStr}</TableCell>
   </TableRow>
   )
@@ -47,6 +55,7 @@ export default function BasicTable(props) {
             <TableCell>Name</TableCell>
             <TableCell align="right">Activity</TableCell>
             <TableCell align="right">Activity Time</TableCell>
+            <TableCell align="right">Tasks</TableCell>
             <TableCell align="right">Skills</TableCell>
           </TableRow>
         </TableHead>

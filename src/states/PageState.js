@@ -25,6 +25,9 @@ const mkAddActivityAgeToObj = currDt => obj => {
   return {...obj, activityAge}
 } ;
 
+const addTaskMapToObj = R.assoc('tasks', {});
+const addTaskMapToEachProp = mapValuesOfObject(addTaskMapToObj);
+
 const initialState = {
   statsPageState: 'INACTIVE',
   tasks: {},
@@ -38,9 +41,9 @@ export default function reduce(state = initialState, action) {
     case INITIATE_TASK_STATS:
       return {...state, tasks: initiateTaskStats(state, action.payload) };
     case UPDATE_TASK_STATS:
-      return {...state, tasks: updateTaskStats(state, action.payload) };
+      return updateTaskStats(state, action.payload);
     case REMOVE_TASK_STATS:
-      return {...state, tasks: removeTaskStats(state, action.payload) };
+      return removeTaskStats(state, action.payload);
     case INITIATE_WORKER_STATS:
       return {...state, workers: initiateWorkerStats(state, action.payload, currDt) };
     case UPDATE_WORKER_STATS:
@@ -60,17 +63,45 @@ const initiateTaskStats = (_state, payload) => {
 
 const updateTaskStats = (state, payload) => {
   const {key, value} = payload;
-  if ( R.has(key, state.tasks) ) {
-    return R.assoc(key, value, state.tasks);
-  }
-  else {
-    return R.assoc(key, value, state.tasks);
-  }
+  const tasks = R.assoc(key, value, state.tasks);
+  const workers = updateWorkerWithTask(state.workers, key, value);
+  return {...state, tasks, workers };
+};
+
+const updateWorkerWithTask = (workers, task_sid, task) => {
+  const {worker_sid} = task;
+  if (!worker_sid || worker_sid === '')
+    return workers;
+  const worker = workers[worker_sid];
+  if ( !worker )
+    return workers;
+  return R.assoc(worker_sid, addTaskToWorker(worker, task_sid, task), workers);
+};
+
+const addTaskToWorker = (worker, task_sid, task) => {
+  return R.assoc('tasks', R.assoc(task_sid, task, worker.tasks), worker);
 };
 
 const removeTaskStats = (state, payload) => {
   const {key} = payload;
-  return R.dissoc(key, state.tasks);
+  const task = state.tasks[key];
+  const workers = updateWorkerThatHadTask(state.workers, key, task);
+  const tasks = R.dissoc(key, state.tasks);
+  return {...state, tasks, workers };
+};
+
+const updateWorkerThatHadTask = (workers, task_sid, task) => {
+  const {worker_sid} = task;
+  if (!worker_sid || worker_sid === '')
+    return workers;
+  const worker = workers[worker_sid];
+  if ( !worker )
+    return workers;
+  return R.assoc(worker_sid, removeTaskFromWorker(worker, task_sid), workers);
+};
+
+const removeTaskFromWorker = (worker, task_sid) => {
+  return R.assoc('tasks', R.dissoc(task_sid, worker.tasks), worker);
 };
 
 const initiateWorkerStats = (_state, items, currDt) => {
@@ -79,7 +110,8 @@ const initiateWorkerStats = (_state, items, currDt) => {
 
   const workersWithActivityDt = addActivityDateToEachProp(items);
   const workersWithActivityAge = addActivityAgeToEachProp(workersWithActivityDt);
-  return workersWithActivityAge;
+  const workersWithTaskMap = addTaskMapToEachProp(workersWithActivityAge);
+  return workersWithTaskMap;
 };
 
 const updateWorkerStats = (state, payload, currDt) => {
