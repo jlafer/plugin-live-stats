@@ -9,6 +9,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
+import {formatSecsHHMMSS} from '../../helpers';
+
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
@@ -16,13 +18,20 @@ const useStyles = makeStyles({
 });
 
 const formatTask = task => {
-  const {age, queue_name, attributes: taskAttrs} = task;
+  const {age, status, queue_name, attributes: taskAttrs} = task;
+  const dt = new Date(null);
+  const ageHHMMSS = formatSecsHHMMSS(dt, age);
   const {channelType, from} = taskAttrs;
-  return `${channelType} from ${from} via ${queue_name} [${age} secs]`;
+  return `${channelType} from ${from} via ${queue_name} [${status} for ${ageHHMMSS}]`;
 }
+
 function WorkerStatsRow(props) {
   const {data} = props;
   const {activity_name, activityAge, attributes, tasks} = data;
+  const taskCnt = R.keys(tasks).length;
+  const activityStr = (taskCnt === 0) ? activity_name : `${activity_name} - on task`;
+  const dt = new Date(null);
+  const ageHHMMSS = formatSecsHHMMSS(dt, activityAge);
   const {full_name, routing} = attributes;
   const tasksFrmtd = R.values(tasks).map(formatTask);
   const tasksStr = tasksFrmtd.join('; ');
@@ -33,8 +42,8 @@ function WorkerStatsRow(props) {
     <TableCell component="th" scope="row">
       {full_name}
     </TableCell>
-    <TableCell align="right">{activity_name}</TableCell>
-    <TableCell align="right">{activityAge}</TableCell>
+    <TableCell align="right">{activityStr}</TableCell>
+    <TableCell align="right">{ageHHMMSS}</TableCell>
     <TableCell align="right">{tasksStr}</TableCell>
     <TableCell align="right">{skillsStr}</TableCell>
   </TableRow>

@@ -22,3 +22,8 @@ export const mapValuesOfObject = objMapperFn => pipe(
   map(converge(pair, [head, pipe(last, objMapperFn)])),
   fromPairs
 );
+
+export const formatSecsHHMMSS = (dt, secs) => {
+  dt.setSeconds(secs);
+  return dt.toISOString().substr(11, 8);
+};
