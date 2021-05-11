@@ -18,11 +18,11 @@ const useStyles = makeStyles({
 });
 
 const formatTask = task => {
-  const {age, status, queue_name, attributes: taskAttrs} = task;
+  const {statusAge, status, channel_unique_name, queue_name, attributes: taskAttrs} = task;
   const dt = new Date(null);
-  const ageHHMMSS = formatSecsHHMMSS(dt, age);
-  const {channelType, from} = taskAttrs;
-  return `${channelType} from ${from} via ${queue_name} [${status} for ${ageHHMMSS}]`;
+  const ageHHMMSS = formatSecsHHMMSS(dt, statusAge);
+  const {from} = taskAttrs;
+  return `${channel_unique_name} from ${from} via ${queue_name} [${status} for ${ageHHMMSS}]`;
 }
 
 function WorkerStatsRow(props) {

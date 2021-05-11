@@ -19,9 +19,6 @@ export default class TemplatePlugin extends FlexPlugin {
     console.log(`${PLUGIN_NAME}: initializing in Flex ${Flex.VERSION} instance`);
     const {store} = manager;
     store.addReducer(namespace, reducers);
-    const serverlessUri = process.env.REACT_APP_SERVERLESS_URI;
-    console.log(`${PLUGIN_NAME}: serverless uri = ${serverlessUri}`);
-    store.dispatch( setServerlessUri(serverlessUri) );
 
     initLiveQuery(
       manager,
@@ -44,7 +41,7 @@ export default class TemplatePlugin extends FlexPlugin {
     // add a custom view
     flex.ViewCollection.Content.add(
       <Flex.View key="stats-page" name="stats-page">
-        <StatsPage serverlessUri={serverlessUri} />
+        <StatsPage />
       </Flex.View>
     );
   }
