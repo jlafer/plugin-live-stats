@@ -4,7 +4,7 @@ import { FlexPlugin } from 'flex-plugin';
 
 import StatsPage from "./components/StatsPage/StatsPageContainer";
 import SidebarStatsButton from './components/SidebarStatsButton/SidebarStatsButton';
-import reducers, {namespace, setServerlessUri} from './states';
+import reducers, {namespace} from './states';
 import {initLiveQuery} from './helpers';
 import {initialTasksCB, updateTaskCB, removeTaskCB, initialWorkersCB, updateWorkerCB, removeWorkerCB} from './statsMgmt';
 

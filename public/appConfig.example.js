@@ -6,4 +6,5 @@ var appConfig = {
   ytica: false,
   logLevel: 'info',
   showSupervisorDesktopView: true,
+  enableReduxLogging: true
 };

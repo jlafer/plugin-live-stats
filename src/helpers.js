@@ -9,13 +9,6 @@ export const initLiveQuery = async (manager, params) => {
   res.on('itemUpdated', updateCB);
 }
 
-// makeMapSecondOfPairFn :: mapFn -> pair -> pair
-const makeMapSecondOfPairFn = mapFn =>
-  converge(
-    pair,
-    [head, pipe(last, mapFn)]
-  );
-
 // mapValuesOfObject :: objMapperFn -> object -> object
 export const mapValuesOfObject = objMapperFn => pipe(
   toPairs,
