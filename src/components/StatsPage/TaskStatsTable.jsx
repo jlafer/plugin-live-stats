@@ -23,9 +23,9 @@ function TaskStatsRow(props) {
     <TableCell component="th" scope="row">
       {task_sid}
     </TableCell>
-    <TableCell align="right">{queue_name}</TableCell>
-    <TableCell align="right">{channel_type}</TableCell>
-    <TableCell align="right">{worker_name}</TableCell>
+    <TableCell>{queue_name}</TableCell>
+    <TableCell>{channel_type}</TableCell>
+    <TableCell>{worker_name}</TableCell>
   </TableRow>
   )
 }
@@ -42,9 +42,9 @@ export default function BasicTable(props) {
         <TableHead>
           <TableRow>
             <TableCell>Task SID</TableCell>
-            <TableCell align="right">Queue</TableCell>
-            <TableCell align="right">Channel</TableCell>
-            <TableCell align="right">Agent</TableCell>
+            <TableCell>Queue</TableCell>
+            <TableCell>Channel</TableCell>
+            <TableCell>Agent</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

@@ -43,10 +43,10 @@ function WorkerStatsRow(props) {
     <TableCell component="th" scope="row">
       {full_name}
     </TableCell>
-    <TableCell align="right">{activityStr}</TableCell>
-    <TableCell align="right">{ageHHMMSS}</TableCell>
-    <TableCell align="right">{tasksStr}</TableCell>
-    <TableCell align="right">{skillsStr}</TableCell>
+    <TableCell>{activityStr}</TableCell>
+    <TableCell>{ageHHMMSS}</TableCell>
+    <TableCell>{tasksStr}</TableCell>
+    <TableCell>{skillsStr}</TableCell>
   </TableRow>
   )
 }
@@ -63,10 +63,10 @@ export default function BasicTable(props) {
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            <TableCell align="right">Activity</TableCell>
-            <TableCell align="right">Activity Time</TableCell>
-            <TableCell align="right">Tasks</TableCell>
-            <TableCell align="right">Skills</TableCell>
+            <TableCell>Activity</TableCell>
+            <TableCell>Activity Time</TableCell>
+            <TableCell>Tasks</TableCell>
+            <TableCell>Skills</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
