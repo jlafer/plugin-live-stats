@@ -74,7 +74,6 @@ const updateOrAddTaskStats = (state, payload, currDt) => {
   };
 };
 
-// TOOD DRY this off; separate into two functions (see updateStatusAgeOfTask)
 const addStateToTask = R.curry((currDt, task) => {
   const statusChangeDate = makeDt(task.date_updated);
   const statusAge = currDt.diff(statusChangeDate, 'seconds');
@@ -103,8 +102,12 @@ const updateWorkerWithTask = (workers, task) => {
   return R.assoc(worker_sid, addTaskToWorker(worker, task_sid, task), workers);
 };
 
-const addTaskToWorker = (worker, task_sid, task) => {
-  return R.assoc('tasks', R.assoc(task_sid, task, worker.tasks), worker);
+const addTaskToWorker = (worker, task_sid, _task) => {
+  return R.assoc('tasks', addTaskSidToList(task_sid, worker.tasks), worker);
+};
+
+const addTaskSidToList = (task_sid, tasks) => {
+  return ( R.includes(task_sid, tasks) ) ? tasks : R.append(task_sid, tasks)
 };
 
 const updateStatusAgeOfTasks = (tasks, currDt) => {
@@ -136,7 +139,7 @@ const updateWorkerThatHadTask = (workers, task_sid, task) => {
 };
 
 const removeTaskFromWorker = (worker, task_sid) => {
-  return R.assoc('tasks', R.dissoc(task_sid, worker.tasks), worker);
+  return R.assoc('tasks', R.without([task_sid], worker.tasks), worker);
 };
 
 const initiateWorkerStats = (state, items, currDt) => {
@@ -163,11 +166,11 @@ const addStateToWorker = R.curry((currDt, tasks, worker) => {
 });
 
 const predWorkerSidEqual = R.curry(
-  (worker_sid, _taskSid, task) => task.worker_sid = worker_sid
+  (worker_sid, task) => task.worker_sid = worker_sid
 );
 
 const getTasksForWorker = (tasks, worker) =>
-  R.pickBy(predWorkerSidEqual(worker.worker_sid), tasks);
+  R.values(tasks).filter(predWorkerSidEqual(worker.worker_sid)).map( R.prop('task_sid') );
 
 const updateWorker = (prevWorker, currWorker, currDt) => {
   const activityStartDt = (currWorker.activity_name == prevWorker.activity_name)

@@ -13,7 +13,7 @@ export default function StatsPage (props) {
       <h2>Tasks</h2>
       <TaskStatsTable tasks={tasks}/>
       <h2>Agents</h2>
-      <WorkerStatsTable workers={workers}/>
+      <WorkerStatsTable workers={workers} tasks={tasks}/>
     </div>
   );
 }

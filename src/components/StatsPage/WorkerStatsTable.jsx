@@ -17,23 +17,24 @@ const useStyles = makeStyles({
   },
 });
 
-const formatTask = task => {
+const formatTask = R.curry((tasks, task_sid) => {
+  const task = tasks[task_sid];
   const {statusAge, status, channel_unique_name, queue_name, attributes: taskAttrs} = task;
   const dt = new Date(null);
   const ageHHMMSS = formatSecsHHMMSS(dt, statusAge);
   const {from} = taskAttrs;
   return `${channel_unique_name} from ${from} via ${queue_name} [${status} for ${ageHHMMSS}]`;
-}
+});
 
 function WorkerStatsRow(props) {
-  const {data} = props;
-  const {activity_name, activityAge, attributes, tasks} = data;
-  const taskCnt = R.keys(tasks).length;
+  const {data, tasks} = props;
+  const {activity_name, activityAge, attributes, tasks: workerTaskSids} = data;
+  const taskCnt = workerTaskSids.length;
   const activityStr = (taskCnt === 0) ? activity_name : `${activity_name} - on task`;
   const dt = new Date(null);
   const ageHHMMSS = formatSecsHHMMSS(dt, activityAge);
   const {full_name, routing} = attributes;
-  const tasksFrmtd = R.values(tasks).map(formatTask);
+  const tasksFrmtd = workerTaskSids.map(formatTask(tasks));
   const tasksStr = tasksFrmtd.join('; ');
   const skills = (routing && routing.skills) ? routing.skills : [];
   const skillsStr = skills.join(', ');
@@ -51,7 +52,7 @@ function WorkerStatsRow(props) {
 }
 
 export default function BasicTable(props) {
-  const {workers} = props;
+  const {workers, tasks} = props;
   const rows = R.values(workers);
 
   const classes = useStyles();
@@ -69,7 +70,7 @@ export default function BasicTable(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => <WorkerStatsRow data={row} key={row.worker_sid} />) }
+          {rows.map((row) => <WorkerStatsRow data={row} tasks={tasks} key={row.worker_sid} />) }
         </TableBody>
       </Table>
     </TableContainer>
