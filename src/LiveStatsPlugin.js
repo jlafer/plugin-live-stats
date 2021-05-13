@@ -4,8 +4,8 @@ import { FlexPlugin } from 'flex-plugin';
 
 import StatsPage from "./components/StatsPage/StatsPageContainer";
 import SidebarStatsButton from './components/SidebarStatsButton/SidebarStatsButton';
-import reducers, {namespace} from './states';
-import {initLiveQuery} from './helpers';
+import reducers, {namespace, setIntervalId} from './states';
+import {initLiveQuery, updateStatusAges} from './helpers';
 import {initialTasksCB, updateTaskCB, removeTaskCB, initialWorkersCB, updateWorkerCB, removeWorkerCB} from './statsMgmt';
 
 const PLUGIN_NAME = 'LiveStatsPlugin';
@@ -34,6 +34,9 @@ export default class TemplatePlugin extends FlexPlugin {
         initialCB: initialTasksCB, updateCB: updateTaskCB, removeCB: removeTaskCB
       }
     );
+
+    const intervalId = setInterval(updateStatusAges(manager), 5000);
+    store.dispatch( setIntervalId(intervalId) )
 
     // add a side-navigation button for presenting a custom view
     flex.SideNav.Content.add(<SidebarStatsButton key="stats" />);

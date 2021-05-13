@@ -2,7 +2,9 @@ import moment from 'moment-timezone';
 import * as R from 'ramda';
 
 import {
+  SET_INTERVAL_ID,
   SET_STATS_PAGE_STATE,
+  UPDATE_STATUS_AGES,
   INITIATE_TASK_STATS,
   UPDATE_TASK_STATS,
   REMOVE_TASK_STATS,
@@ -17,6 +19,7 @@ const makeDt = makeDtForTz('America/Los_Angeles');
 
 const initialState = {
   statsPageState: 'INACTIVE',
+  intervalId: 0,
   latestRefreshDate: moment(),
   tasks: {},
   workers: {}
@@ -26,6 +29,10 @@ export default function reduce(state = initialState, action) {
   const currDt = moment();
   
   switch (action.type) {
+    case UPDATE_STATUS_AGES:
+      return refreshStatusAges(state, currDt);
+    case SET_INTERVAL_ID:
+      return {...state, intervalId: action.payload};
     case INITIATE_TASK_STATS:
       return initiateTaskStats(state, action.payload, currDt);
     case UPDATE_TASK_STATS:
@@ -110,16 +117,6 @@ const addTaskSidToList = (task_sid, tasks) => {
   return ( R.includes(task_sid, tasks) ) ? tasks : R.append(task_sid, tasks)
 };
 
-const updateStatusAgeOfTasks = (tasks, currDt) => {
-  const updateStatusAgeOfEachTask = mapValuesOfObject(updateStatusAgeOfTask(currDt));
-  return updateStatusAgeOfEachTask(tasks);
-};
-
-const updateStatusAgeOfTask = R.curry((currDt, task) => {
-  const statusAge = currDt.diff(task.statusChangeDate, 'seconds');
-  return {...task, statusAge}
-});
-
 const removeTaskStats = (state, payload) => {
   const {key} = payload;
   const task = state.tasks[key];
@@ -183,4 +180,30 @@ const updateWorker = (prevWorker, currWorker, currDt) => {
 const removeWorkerStats = (state, payload) => {
   const {key} = payload;
   return R.dissoc(key, state.workers);
+};
+
+const updateStatusAgeOfTasks = (tasks, currDt) => {
+  const updateStatusAgeOfEachTask = mapValuesOfObject(updateStatusAgeOfTask(currDt));
+  return updateStatusAgeOfEachTask(tasks);
+};
+
+const updateStatusAgeOfTask = R.curry((currDt, task) => {
+  const statusAge = currDt.diff(task.statusChangeDate, 'seconds');
+  return {...task, statusAge};
+});
+
+const updateActivityAgeOfWorkers = (workers, currDt) => {
+  const updateActivityAgeOfEachWorker = mapValuesOfObject(updateActivityAgeOfWorker(currDt));
+  return updateActivityAgeOfEachWorker(workers);
+};
+
+const updateActivityAgeOfWorker = R.curry((currDt, worker) => {
+  const activityAge = currDt.diff(worker.activityStartDt, 'seconds');
+  return {...worker, activityAge};
+});
+
+const refreshStatusAges = (state, currDt) => {
+  const tasks = updateStatusAgeOfTasks(state.tasks, currDt);
+  const workers = updateActivityAgeOfWorkers(state.workers, currDt);
+  return {...state, latestRefreshDate: currDt, tasks, workers}
 };

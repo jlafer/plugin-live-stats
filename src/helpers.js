@@ -1,4 +1,5 @@
 import {converge, fromPairs, head, last, map, pair, pipe, toPairs} from 'ramda';
+import {refreshStatusAges} from './states';
 
 export const initLiveQuery = async (manager, params) => {
   const {index, query, initialCB, updateCB, removeCB} = params;
@@ -20,3 +21,7 @@ export const formatSecsHHMMSS = (dt, secs) => {
   dt.setSeconds(secs);
   return dt.toISOString().substr(11, 8);
 };
+
+export const updateStatusAges = manager => () => {
+  manager.store.dispatch( refreshStatusAges() );
+}
