@@ -6,7 +6,7 @@ import WorkerStatsTable from './WorkerStatsTable';
 
 export default function StatsPage (props) {
   const {pageState} = props;
-  const {statsPageState, tasks, workers} = pageState;
+  const {tasks, workers} = pageState;
   return (
     <div>
       <h1>My Stats Page</h1>
