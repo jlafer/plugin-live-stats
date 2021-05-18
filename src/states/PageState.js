@@ -3,6 +3,7 @@ import * as R from 'ramda';
 
 import {
   SET_INTERVAL_ID,
+  SET_QUERY,
   SET_STATS_PAGE_STATE,
   UPDATE_STATUS_AGES,
   INITIATE_TASK_STATS,
@@ -21,6 +22,7 @@ const initialState = {
   statsPageState: 'INACTIVE',
   intervalId: 0,
   latestRefreshDate: moment(),
+  queries: {},
   tasks: {},
   workers: {}
 };
@@ -29,6 +31,8 @@ export default function reduce(state = initialState, action) {
   const currDt = moment();
   
   switch (action.type) {
+    case SET_QUERY:
+      return {...state, queries: R.assoc(action.payload.index, action.payload.query, state.queries)};
     case UPDATE_STATUS_AGES:
       return refreshStatusAges(state, currDt);
     case SET_INTERVAL_ID:

@@ -4,13 +4,12 @@ import { FlexPlugin } from 'flex-plugin';
 
 import StatsPage from "./components/StatsPage/StatsPageContainer";
 import SidebarStatsButton from './components/SidebarStatsButton/SidebarStatsButton';
-import reducers, {namespace, setIntervalId} from './states';
-import {initLiveQuery, updateStatusAges} from './helpers';
-import {initialTasksCB, updateTaskCB, removeTaskCB, initialWorkersCB, updateWorkerCB, removeWorkerCB} from './statsMgmt';
+import reducers, {namespace} from './states';
+import {startLiveQueries} from './statsMgmt';
 
 const PLUGIN_NAME = 'LiveStatsPlugin';
 
-export default class TemplatePlugin extends FlexPlugin {
+export default class LiveStatsPlugin extends FlexPlugin {
   constructor() {
     super(PLUGIN_NAME);
   }
@@ -20,28 +19,12 @@ export default class TemplatePlugin extends FlexPlugin {
     const {store} = manager;
     store.addReducer(namespace, reducers);
 
-    initLiveQuery(
-      manager,
-      {
-        index: 'tr-worker', query: '',
-        initialCB: initialWorkersCB, updateCB: updateWorkerCB, removeCB: removeWorkerCB
-      }
-    );
-    initLiveQuery(
-      manager,
-      {
-        index: 'tr-task', query: '',
-        initialCB: initialTasksCB, updateCB: updateTaskCB, removeCB: removeTaskCB
-      }
-    );
+    startLiveQueries(manager);
 
-    const intervalId = setInterval(updateStatusAges(manager), 5000);
-    store.dispatch( setIntervalId(intervalId) )
-
-    // add a side-navigation button for presenting a custom view
+    // add a side-navigation button for presenting the StatsPage
     flex.SideNav.Content.add(<SidebarStatsButton key="stats" />);
 
-    // add a custom view
+    // add the StatsPage as a custom view
     flex.ViewCollection.Content.add(
       <Flex.View key="stats-page" name="stats-page">
         <StatsPage />

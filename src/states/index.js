@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 
 import {
   SET_CURRENT_TASK, SET_SERVERLESS_URI, SET_SYNC_TOKEN,
-  SET_STATS_PAGE_STATE, SET_INTERVAL_ID, UPDATE_STATUS_AGES,
+  SET_STATS_PAGE_STATE, SET_INTERVAL_ID, SET_QUERY, UPDATE_STATUS_AGES,
   INITIATE_TASK_STATS, UPDATE_TASK_STATS, REMOVE_TASK_STATS,
   INITIATE_WORKER_STATS, UPDATE_WORKER_STATS, REMOVE_WORKER_STATS
 } from './actions';
@@ -59,6 +59,10 @@ export const setStatsPageState = (payload) => ({
 
 export const setIntervalId = (payload) => ({
   type: SET_INTERVAL_ID, payload
+});
+
+export const setQuery = (index, query) => ({
+  type: SET_QUERY, payload: {index, query}
 });
 
 export const refreshStatusAges = () => ({

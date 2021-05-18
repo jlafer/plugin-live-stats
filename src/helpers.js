@@ -1,10 +1,11 @@
 import {converge, fromPairs, head, last, map, pair, pipe, toPairs} from 'ramda';
-import {refreshStatusAges} from './states';
+import {refreshStatusAges, setQuery} from './states';
 
 export const initLiveQuery = async (manager, params) => {
   const {index, query, initialCB, updateCB, removeCB} = params;
   const res = await manager.insightsClient.liveQuery(index, query);
   console.log(`subscribed to LiveQuery for ${index} where -${query}-  `);
+  manager.store.dispatch( setQuery(index, res) );
   initialCB(res);
   res.on('itemRemoved', removeCB);
   res.on('itemUpdated', updateCB);
