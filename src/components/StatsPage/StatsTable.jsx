@@ -142,7 +142,6 @@ const StatsRow = (props) => {
 
 export default function StatsTable(props) {
   const {data, metadata, query} = props;
-  console.log('StatsTable: query:', query);
   if (!query)
     return null;
   const {predicate} = query;
@@ -150,7 +149,6 @@ export default function StatsTable(props) {
   const activityStr = value ? value : '';
   const {cols, key, defaultSortCol} = metadata;
   const rows = data;
-  const [activity, setActivity] = React.useState(activityStr);
 
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
@@ -233,7 +231,7 @@ export default function StatsTable(props) {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={activity}
+          value={activityStr}
           onChange={handleActivityChange}
         >
           <MenuItem value={'Available'}>Available</MenuItem>
