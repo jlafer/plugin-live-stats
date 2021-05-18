@@ -40,7 +40,7 @@ const metadata = {
 };
 
 export default function WorkersTable(props) {
-  const {workers, tasks} = props;
+  const {workers, tasks, query} = props;
   const rows = R.values(workers).map(formatRow(tasks));
-  return <StatsTable data={rows} metadata={metadata} /> ;
+  return <StatsTable data={rows} metadata={metadata} query={query} /> ;
 }

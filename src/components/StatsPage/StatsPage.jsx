@@ -11,9 +11,9 @@ export default function StatsPage (props) {
     <div>
       <h1>My Stats Page</h1>
       <h2>Tasks</h2>
-      <TaskStatsTable tasks={tasks} query={queries['tr-tasks']}/>
+      <TaskStatsTable tasks={tasks} query={queries['tr-task']}/>
       <h2>Agents</h2>
-      <WorkerStatsTable workers={workers} tasks={tasks} query={queries['tr-workers']}/>
+      <WorkerStatsTable workers={workers} tasks={tasks} query={queries['tr-worker']}/>
     </div>
   );
 }

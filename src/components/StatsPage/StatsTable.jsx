@@ -2,6 +2,10 @@ import * as R from 'ramda';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -13,14 +17,14 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Paper from '@material-ui/core/Paper';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import { Manager } from "@twilio/flex-ui";
+import {startWorkersQuery} from "../../statsMgmt";
 
 function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
+  if (b[orderBy] < a[orderBy])
     return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
+  if (b[orderBy] > a[orderBy])
     return 1;
-  }
   return 0;
 }
 
@@ -107,6 +111,13 @@ const useStyles = makeStyles((theme) => ({
     top: 20,
     width: 1,
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
 }));
 
 const StatsRow = (props) => {
@@ -129,10 +140,17 @@ const StatsRow = (props) => {
   );
 };
 
-export default function EnhancedTable(props) {
-  const {data, metadata} = props;
+export default function StatsTable(props) {
+  const {data, metadata, query} = props;
+  console.log('StatsTable: query:', query);
+  if (!query)
+    return null;
+  const {predicate} = query;
+  const {field, op, value} = predicate;
+  const activityStr = value ? value : '';
   const {cols, key, defaultSortCol} = metadata;
   const rows = data;
+  const [activity, setActivity] = React.useState(activityStr);
 
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
@@ -158,6 +176,11 @@ export default function EnhancedTable(props) {
 
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
+  };
+
+  const handleActivityChange = (event) => {
+    const predicate = {field: 'activity_name', op: '==', value: event.target.value}
+    startWorkersQuery(Manager.getInstance(), predicate);
   };
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -205,6 +228,21 @@ export default function EnhancedTable(props) {
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
       />
+      <FormControl className={classes.formControl}>
+        <InputLabel id="demo-simple-select-label">Activity</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={activity}
+          onChange={handleActivityChange}
+        >
+          <MenuItem value={'Available'}>Available</MenuItem>
+          <MenuItem value={'Unavailable'}>Unavailable</MenuItem>
+          <MenuItem value={'Busy'}>Busy</MenuItem>
+          <MenuItem value={'Lunch'}>Lunch</MenuItem>
+          <MenuItem value={'Offline'}>Offline</MenuItem>
+        </Select>
+      </FormControl>
     </div>
   );
 }

@@ -57,8 +57,10 @@ export default function reduce(state = initialState, action) {
 }
 
 const setQuery = (queries, payload) => {
-  const {index, instance, query} = payload;
-  return R.assoc(index, {instance, query}, queries);
+  const {index, instance, predicate} = payload;
+  if (!!instance)
+    return R.assoc(index, {instance, predicate}, queries);
+  return R.dissoc(index, queries);
 };
 
 const initiateTaskStats = (state, items, currDt) => {

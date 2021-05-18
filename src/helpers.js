@@ -1,11 +1,19 @@
 import {converge, fromPairs, head, last, map, pair, pipe, toPairs} from 'ramda';
-import {refreshStatusAges, setQuery} from './states';
+import {namespace, refreshStatusAges, setQuery} from './states';
 
 export const initLiveQuery = async (manager, params) => {
-  const {index, query, initialCB, updateCB, removeCB} = params;
-  const instance = await manager.insightsClient.liveQuery(index, query);
-  console.log(`subscribed to LiveQuery for ${index} where -${query}-  `);
-  manager.store.dispatch( setQuery(index, instance, query) );
+  const {index, predicate, initialCB, updateCB, removeCB} = params;
+  const pageState = manager.store.getState()[namespace].pageState
+  const query = pageState.queries && pageState.queries[index];
+  if (!!query) {
+    manager.store.dispatch( setQuery(index, null) );
+    await query.instance.close();
+  }
+  const {field, op, value} = predicate;
+  const queryStr = field ? `data.${field} ${op} "${value}"` : '';
+  const instance = await manager.insightsClient.liveQuery(index, queryStr);
+  console.log(`subscribed to LiveQuery for ${index} where -${queryStr}-  `);
+  manager.store.dispatch( setQuery(index, instance, predicate) );
   initialCB(instance);
   instance.on('itemRemoved', removeCB);
   instance.on('itemUpdated', updateCB);
