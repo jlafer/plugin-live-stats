@@ -61,8 +61,8 @@ export const setIntervalId = (payload) => ({
   type: SET_INTERVAL_ID, payload
 });
 
-export const setQuery = (index, query) => ({
-  type: SET_QUERY, payload: {index, query}
+export const setQuery = (index, instance, query) => ({
+  type: SET_QUERY, payload: {index, instance, query}
 });
 
 export const refreshStatusAges = () => ({

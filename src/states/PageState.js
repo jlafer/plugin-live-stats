@@ -32,7 +32,7 @@ export default function reduce(state = initialState, action) {
   
   switch (action.type) {
     case SET_QUERY:
-      return {...state, queries: R.assoc(action.payload.index, action.payload.query, state.queries)};
+      return {...state, queries: setQuery(state.queries, action.payload)};
     case UPDATE_STATUS_AGES:
       return refreshStatusAges(state, currDt);
     case SET_INTERVAL_ID:
@@ -55,6 +55,11 @@ export default function reduce(state = initialState, action) {
       return state;
   }
 }
+
+const setQuery = (queries, payload) => {
+  const {index, instance, query} = payload;
+  return R.assoc(index, {instance, query}, queries);
+};
 
 const initiateTaskStats = (state, items, currDt) => {
   const addStateToEachTask = mapValuesOfObject(addStateToTask(currDt));
