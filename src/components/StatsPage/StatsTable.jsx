@@ -29,7 +29,6 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  console.log(`--------------sorting by ${orderBy}`);
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
@@ -140,13 +139,45 @@ const StatsRow = (props) => {
   );
 };
 
+const handleFilterValueChange = R.curry((filters, event) => {
+  const name = event.target.name;
+  const filter = {name: name, op: '==', value: event.target.value};
+  const newFilters = replaceFilter(filters, filter);
+  startWorkersQuery(Manager.getInstance(), newFilters);
+});
+
+const replaceFilter = (filters, filter) =>
+  filters.map(f => (f.name === filter.name) ? filter : f);
+
+const FilterSelect = (props) => {
+  const {filterDefn, filters, classes} = props;
+  const {name, label, options} = filterDefn;
+  const filter = filters.find(f => f.name === name);
+  const valueStr = filter ? filter.value : '';
+  const selectId = `select-${name}`;
+  const labelId = `select-${name}-label`;
+  return (
+    <FormControl className={classes.formControl}>
+      <InputLabel id={labelId}>{label}</InputLabel>
+      <Select
+        labelId={labelId}
+        id={selectId}
+        value={valueStr}
+        name={name}
+        onChange={handleFilterValueChange(filters)}
+      >
+        {options.map((option, index) => <MenuItem value={option} key={index} >{option}</MenuItem>)}
+      </Select>
+    </FormControl>
+  )
+};
+
 export default function StatsTable(props) {
-  const {data, metadata, query} = props;
+  const {data, metadata, query, queryDefn} = props;
   if (!query)
     return null;
-  const {predicate} = query;
-  const {field, op, value} = predicate;
-  const activityStr = value ? value : '';
+  const {filters} = query;
+  const {filterDefns} = queryDefn;
   const {cols, key, defaultSortCol} = metadata;
   const rows = data;
 
@@ -174,11 +205,6 @@ export default function StatsTable(props) {
 
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
-  };
-
-  const handleActivityChange = (event) => {
-    const predicate = {field: 'activity_name', op: '==', value: event.target.value}
-    startWorkersQuery(Manager.getInstance(), predicate);
   };
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -226,21 +252,7 @@ export default function StatsTable(props) {
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
       />
-      <FormControl className={classes.formControl}>
-        <InputLabel id="demo-simple-select-label">Activity</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={activityStr}
-          onChange={handleActivityChange}
-        >
-          <MenuItem value={'Available'}>Available</MenuItem>
-          <MenuItem value={'Unavailable'}>Unavailable</MenuItem>
-          <MenuItem value={'Busy'}>Busy</MenuItem>
-          <MenuItem value={'Lunch'}>Lunch</MenuItem>
-          <MenuItem value={'Offline'}>Offline</MenuItem>
-        </Select>
-      </FormControl>
+      {filterDefns.map(fd => <FilterSelect filterDefn={fd} filters={filters} classes={classes} key={fd.name} />)}
     </div>
   );
 }

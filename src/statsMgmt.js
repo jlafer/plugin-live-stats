@@ -8,32 +8,35 @@ import {
 export const startLiveQueries = (manager) => {
   startWorkersQuery(
     manager,
-    {field: 'activity_name', op: '==', value: 'Available'}
+    [
+      {name: 'activity', op: '==', value: 'Available'},
+      {name: 'team', op: '==', value: 'All'}
+    ]
   );
   startTasksQuery(
     manager,
-    {}
+    []
   );
   const intervalId = setInterval(updateStatusAges(manager), 5000);
   const {store} = manager;
   store.dispatch( setIntervalId(intervalId) )
 };
 
-export const startWorkersQuery = (manager, predicate) => {
+export const startWorkersQuery = (manager, filters) => {
   startQuery(
     manager,
     {
-      index: 'tr-worker', predicate,
+      key: 'workers', filters,
       initialCB: initialWorkersCB, updateCB: updateWorkerCB, removeCB: removeWorkerCB
     }
   );
 };
 
-export const startTasksQuery = (manager, predicate) => {
+export const startTasksQuery = (manager, filters) => {
   startQuery(
     manager,
     {
-      index: 'tr-task', predicate,
+      key: 'tasks', filters,
       initialCB: initialTasksCB, updateCB: updateTaskCB, removeCB: removeTaskCB
     }
   );

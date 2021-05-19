@@ -4,10 +4,35 @@ import { FlexPlugin } from 'flex-plugin';
 
 import StatsPage from "./components/StatsPage/StatsPageContainer";
 import SidebarStatsButton from './components/SidebarStatsButton/SidebarStatsButton';
-import reducers, {namespace} from './states';
+import reducers, {namespace, initQueries} from './states';
 import {startLiveQueries} from './statsMgmt';
 
 const PLUGIN_NAME = 'LiveStatsPlugin';
+
+const querySchema = {
+  workers: {
+    index: 'tr-worker',
+    filterDefns: [
+      {
+        name: 'activity', label: 'Activity', field: 'activity_name',
+        options: ['All', 'Available', 'Unavailable', 'Break', 'Offline']
+      },
+      {
+        name: 'team', label: 'Team', field: 'attributes.team',
+        options: ['All', 'Red', 'Blue', 'Green', 'Yellow']
+      }
+    ]
+  },
+  tasks: {
+    index: 'tr-task',
+    filterDefns: [
+      {
+        name: 'status', label: 'Status', field: 'status',
+        options: ['Pending', 'Reserved', 'Assigned', 'Wrapping']
+      }
+    ]
+  }
+};
 
 export default class LiveStatsPlugin extends FlexPlugin {
   constructor() {
@@ -19,6 +44,7 @@ export default class LiveStatsPlugin extends FlexPlugin {
     const {store} = manager;
     store.addReducer(namespace, reducers);
 
+    manager.store.dispatch( initQueries(querySchema) );
     startLiveQueries(manager);
 
     // add a side-navigation button for presenting the StatsPage

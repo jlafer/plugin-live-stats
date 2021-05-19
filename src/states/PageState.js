@@ -2,6 +2,7 @@ import moment from 'moment-timezone';
 import * as R from 'ramda';
 
 import {
+  INIT_QUERIES,
   SET_INTERVAL_ID,
   SET_QUERY,
   SET_STATS_PAGE_STATE,
@@ -16,12 +17,14 @@ import {
 import {mapValuesOfObject} from '../helpers';
 
 const makeDtForTz = tz => utcDtStr => moment.utc(utcDtStr).tz(tz);
+// move TZ to schema
 const makeDt = makeDtForTz('America/Los_Angeles');
 
 const initialState = {
   statsPageState: 'INACTIVE',
   intervalId: 0,
   latestRefreshDate: moment(),
+  querySchema: {},
   queries: {},
   tasks: {},
   workers: {}
@@ -31,6 +34,8 @@ export default function reduce(state = initialState, action) {
   const currDt = moment();
   
   switch (action.type) {
+    case INIT_QUERIES:
+      return {...state, querySchema: action.payload};
     case SET_QUERY:
       return {...state, queries: setQuery(state.queries, action.payload)};
     case UPDATE_STATUS_AGES:
@@ -57,10 +62,10 @@ export default function reduce(state = initialState, action) {
 }
 
 const setQuery = (queries, payload) => {
-  const {index, instance, predicate} = payload;
+  const {key, instance, filters} = payload;
   if (!!instance)
-    return R.assoc(index, {instance, predicate}, queries);
-  return R.dissoc(index, queries);
+    return R.assoc(key, {instance, filters}, queries);
+  return R.dissoc(key, queries);
 };
 
 const initiateTaskStats = (state, items, currDt) => {
@@ -173,12 +178,12 @@ const addStateToWorker = R.curry((currDt, tasks, worker) => {
   return {...worker, activityStartDt, activityAge, tasks: workerTasks};
 });
 
-const predWorkerSidEqual = R.curry(
+const isWorkerSidEqual = R.curry(
   (worker_sid, task) => task.worker_sid = worker_sid
 );
 
 const getTasksForWorker = (tasks, worker) =>
-  R.values(tasks).filter(predWorkerSidEqual(worker.worker_sid)).map( R.prop('task_sid') );
+  R.values(tasks).filter(isWorkerSidEqual(worker.worker_sid)).map( R.prop('task_sid') );
 
 const updateWorker = (prevWorker, currWorker, currDt) => {
   const activityStartDt = (currWorker.activity_name == prevWorker.activity_name)
