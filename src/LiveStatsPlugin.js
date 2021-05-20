@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import React from 'react';
 import * as Flex from '@twilio/flex-ui';
 import { FlexPlugin } from 'flex-plugin';
@@ -13,10 +14,6 @@ const querySchema = {
   workers: {
     index: 'tr-worker',
     filterDefns: [
-      {
-        name: 'activity', label: 'Activity', field: 'activity_name',
-        options: ['All', 'Available', 'Unavailable', 'Break', 'Offline']
-      },
       {
         name: 'team', label: 'Team', field: 'attributes.team',
         options: ['All', 'Red', 'Blue', 'Green', 'Yellow']
@@ -34,6 +31,15 @@ const querySchema = {
   }
 };
 
+const addWorkerActivityFilterDefn = (store, querySchema) => {
+  const activities = Object.fromEntries(store.getState().flex.worker.activities);
+  const activityNames = R.pipe(R.values, R.map(R.prop('name')), R.append('All'))(activities);
+  querySchema.workers.filterDefns.push({
+    name: 'activity', label: 'Activity', field: 'activity_name',
+    options: activityNames
+  });
+};
+
 export default class LiveStatsPlugin extends FlexPlugin {
   constructor() {
     super(PLUGIN_NAME);
@@ -43,7 +49,8 @@ export default class LiveStatsPlugin extends FlexPlugin {
     console.log(`${PLUGIN_NAME}: initializing in Flex ${Flex.VERSION} instance`);
     const {store} = manager;
     store.addReducer(namespace, reducers);
-
+    // NOTE: mutates querySchema
+    addWorkerActivityFilterDefn(store, querySchema);
     manager.store.dispatch( initQueries(querySchema) );
     startLiveQueries(manager);
 

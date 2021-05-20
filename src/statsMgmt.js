@@ -15,7 +15,9 @@ export const startLiveQueries = (manager) => {
   );
   startTasksQuery(
     manager,
-    []
+    [
+      {name: 'status', op: '==', value: 'Pending'}
+    ]
   );
   const intervalId = setInterval(updateStatusAges(manager), 5000);
   const {store} = manager;
