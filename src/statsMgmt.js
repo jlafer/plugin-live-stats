@@ -6,15 +6,17 @@ import {
 } from "./states";
 
 export const startLiveQueries = (manager) => {
-  startWorkersQuery(
+  startQuery(
     manager,
+    'workers',
     [
       {name: 'activity', op: '==', value: 'Available'},
       {name: 'team', op: '==', value: 'All'}
     ]
   );
-  startTasksQuery(
+  startQuery(
     manager,
+    'tasks',
     [
       {name: 'status', op: '==', value: 'Pending'}
     ]
@@ -23,30 +25,6 @@ export const startLiveQueries = (manager) => {
   const {store} = manager;
   store.dispatch( setIntervalId(intervalId) )
 };
-
-export const startWorkersQuery = (manager, filters) => {
-  startQuery(
-    manager,
-    {
-      key: 'workers', filters,
-      initialCB: initialWorkersCB, updateCB: updateWorkerCB, removeCB: removeWorkerCB
-    }
-  );
-};
-
-export const startTasksQuery = (manager, filters) => {
-  startQuery(
-    manager,
-    {
-      key: 'tasks', filters,
-      initialCB: initialTasksCB, updateCB: updateTaskCB, removeCB: removeTaskCB
-    }
-  );
-};
-
-const startQuery = (manager, params) => {
-  initLiveQuery(manager, params);
-}
 
 const initialTasksCB = (args) => {
   const items = args.getItems();
@@ -74,4 +52,23 @@ const updateWorkerCB = (args) => {
 
 const removeWorkerCB = (args) => {
   Manager.getInstance().store.dispatch( removeWorkerStats(args.key) );
+};
+
+const callbacks = {
+  workers: {
+    initialCB: initialWorkersCB, updateCB: updateWorkerCB, removeCB: removeWorkerCB
+  },
+  tasks: {
+    initialCB: initialTasksCB, updateCB: updateTaskCB, removeCB: removeTaskCB
+  }
+};
+
+export const startQuery = (manager, key, filters) => {
+  console.log('---------startQuery: key', key);
+  const qryCBs = callbacks[key];
+  const {initialCB, updateCB, removeCB} = qryCBs;
+  initLiveQuery(
+    manager,
+    {key, filters, initialCB, updateCB, removeCB}
+  );
 };

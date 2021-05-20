@@ -18,7 +18,7 @@ import Paper from '@material-ui/core/Paper';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import { Manager } from "@twilio/flex-ui";
-import {startWorkersQuery} from "../../statsMgmt";
+import {startQuery} from "../../statsMgmt";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy])
@@ -139,18 +139,18 @@ const StatsRow = (props) => {
   );
 };
 
-const handleFilterValueChange = R.curry((filters, event) => {
+const handleFilterValueChange = R.curry((qryName, filters, event) => {
   const name = event.target.name;
   const filter = {name: name, op: '==', value: event.target.value};
   const newFilters = replaceFilter(filters, filter);
-  startWorkersQuery(Manager.getInstance(), newFilters);
+  startQuery(Manager.getInstance(), qryName, newFilters);
 });
 
 const replaceFilter = (filters, filter) =>
   filters.map(f => (f.name === filter.name) ? filter : f);
 
 const FilterSelect = (props) => {
-  const {filterDefn, filters, classes} = props;
+  const {qryName, filterDefn, filters, classes} = props;
   const {name, label, options} = filterDefn;
   const filter = filters.find(f => f.name === name);
   const valueStr = filter ? filter.value : '';
@@ -164,7 +164,7 @@ const FilterSelect = (props) => {
         id={selectId}
         value={valueStr}
         name={name}
-        onChange={handleFilterValueChange(filters)}
+        onChange={handleFilterValueChange(qryName, filters)}
       >
         {options.map((option, index) => <MenuItem value={option} key={index} >{option}</MenuItem>)}
       </Select>
@@ -173,7 +173,8 @@ const FilterSelect = (props) => {
 };
 
 export default function StatsTable(props) {
-  const {data, metadata, query, queryDefn} = props;
+  console.log('----------------StatsTable: props', props);
+  const {name, data, metadata, query, queryDefn} = props;
   if (!query)
     return null;
   const {filters} = query;
@@ -252,7 +253,7 @@ export default function StatsTable(props) {
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"
       />
-      {filterDefns.map(fd => <FilterSelect filterDefn={fd} filters={filters} classes={classes} key={fd.name} />)}
+      {filterDefns.map(fd => <FilterSelect qryName={name} filterDefn={fd} filters={filters} classes={classes} key={fd.name} />)}
     </div>
   );
 }

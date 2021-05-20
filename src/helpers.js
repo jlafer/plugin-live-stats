@@ -22,6 +22,8 @@ export const initLiveQuery = async (manager, params) => {
 };
 
 const buildPredString = curry( (filterDefns, filter) => {
+  console.log('------------buildPredString: filterDefns:', filterDefns);
+  console.log('------------buildPredString: filter:', filter);
   const {name, op, value} = filter;
   const filterDefn = filterDefns.find(fd => fd.name === name);
   return `data.${filterDefn.field} ${op} "${value}"`;

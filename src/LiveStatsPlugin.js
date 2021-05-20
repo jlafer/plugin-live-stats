@@ -25,7 +25,7 @@ const querySchema = {
     filterDefns: [
       {
         name: 'status', label: 'Status', field: 'status',
-        options: ['Pending', 'Reserved', 'Assigned', 'Wrapping']
+        options: ['All', 'pending', 'reserved', 'assigned', 'wrapping']
       }
     ]
   }

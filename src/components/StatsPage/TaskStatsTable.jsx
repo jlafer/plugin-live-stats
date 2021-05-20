@@ -1,56 +1,33 @@
 import * as R from 'ramda';
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
+import {formatSecsHHMMSS} from '../../helpers';
+import StatsTable from './StatsTable';
 
-function TaskStatsRow(props) {
-  const {data} = props;
-  const {task_sid, queue_name, channel_type, worker_name} = data;
-  return (
-  <TableRow>
-    <TableCell component="th" scope="row">
-      {task_sid}
-    </TableCell>
-    <TableCell>{queue_name}</TableCell>
-    <TableCell>{channel_type}</TableCell>
-    <TableCell>{worker_name}</TableCell>
-  </TableRow>
-  )
-}
+const formatRow = (task) => {
+  console.log('----------------formatRow: task', task);
+  const {task_sid: sid, status, queue_name, channel_type, attributes: taskAttrs, worker_name, statusAge} = task;
+  const dt = new Date(null);
+  const taskHHMMSS = formatSecsHHMMSS(dt, statusAge);
+  const {from} = taskAttrs;
+  return {sid, from, status, queue_name, taskHHMMSS, channel_type, worker_name};
+};
 
-export default function BasicTable(props) {
-  const {tasks} = props;
-  const rows = R.values(tasks);
+const metadata = {
+  key: 'sid',
+  cols: [
+    { id: 'from', numeric: false, disablePadding: true, label: 'From' },
+    { id: 'status', numeric: false, disablePadding: true, label: 'Status' },
+    { id: 'queue_name', numeric: false, disablePadding: true, label: 'Queue' },
+    { id: 'taskHHMMSS', numeric: true, disablePadding: false, label: 'Task Time' },
+    { id: 'channel_type', numeric: false, disablePadding: false, label: 'Channel' },
+    { id: 'worker_name', numeric: false, disablePadding: false, label: 'Agent' },
+  ],
+  defaultSortCol: 'queue_name'
+};
 
-  const classes = useStyles();
-
-  return (
-    <TableContainer component={Paper}>
-      <Table className={classes.table} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Task SID</TableCell>
-            <TableCell>Queue</TableCell>
-            <TableCell>Channel</TableCell>
-            <TableCell>Agent</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => <TaskStatsRow data={row} key={row.task_sid} />) }
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
+export default function TasksTable(props) {
+  const {tasks, query, queryDefn} = props;
+  const rows = R.values(tasks).map(formatRow);
+  return <StatsTable name="tasks" data={rows} metadata={metadata} query={query} queryDefn={queryDefn} /> ;
 }
