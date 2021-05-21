@@ -16,7 +16,13 @@ const querySchema = {
     filterDefns: [
       {
         name: 'team', label: 'Team', field: 'attributes.team',
-        options: ['All', 'Red', 'Blue', 'Green', 'Yellow']
+        options: [
+          {label: 'All', name: 'All'},
+          {label: 'Red', name: 'Red'},
+          {label: 'Blue', name: 'Blue'},
+          {label: 'Green', name: 'Green'},
+          {label: 'Yellow', name: 'Yellow'}
+        ]
       }
     ]
   },
@@ -25,18 +31,29 @@ const querySchema = {
     filterDefns: [
       {
         name: 'status', label: 'Status', field: 'status',
-        options: ['All', 'pending', 'reserved', 'assigned', 'wrapping']
+        options: [
+          {label: 'All', name: 'All'},
+          {label: 'Queued', name: 'pending'},
+          {label: 'Alerting', name: 'reserved'},
+          {label: 'Assigned', name: 'assigned'},
+          {label: 'Wrapping', name: 'wrapping'}
+        ]
       }
     ]
   }
 };
 
+const nameToNameAndLabelObj = (name, nameToLabelFn) => {
+  const label = nameToLabelFn ? nameToLabelFn(name) : name;
+  return ({name: name, label: label})
+};
+
 const addWorkerActivityFilterDefn = (store, querySchema) => {
   const activities = Object.fromEntries(store.getState().flex.worker.activities);
-  const activityNames = R.pipe(R.values, R.map(R.prop('name')), R.append('All'))(activities);
+  const activityOptions = R.pipe(R.values, R.map(R.prop('name')), R.map(nameToNameAndLabelObj), R.append({name: 'All', label: 'All'}))(activities);
   querySchema.workers.filterDefns.push({
     name: 'activity', label: 'Activity', field: 'activity_name',
-    options: activityNames
+    options: activityOptions
   });
 };
 

@@ -166,7 +166,7 @@ const FilterSelect = (props) => {
         name={name}
         onChange={handleFilterValueChange(qryName, filters)}
       >
-        {options.map((option, index) => <MenuItem value={option} key={index} >{option}</MenuItem>)}
+        {options.map((option, index) => <MenuItem value={option.name} key={index} >{option.label}</MenuItem>)}
       </Select>
     </FormControl>
   )
