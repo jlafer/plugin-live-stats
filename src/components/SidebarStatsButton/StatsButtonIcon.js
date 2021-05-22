@@ -1,5 +1,17 @@
 import React from "react";
 
+/*
+  Example Usage:
+  			<SideLink
+				{...this.props}
+				icon={<StatsButtonIcon />}
+				iconActive={<StatsButtonIconActive />}
+				isActive={this.props.activeView === "stats-page"}
+				onClick={this.handleClick}
+			>
+				Custom Page Nav
+			</SideLink>
+*/
 export const StatsButtonIconActive = props => {
   return (
     <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1">

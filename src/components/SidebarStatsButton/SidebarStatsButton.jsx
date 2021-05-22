@@ -1,7 +1,6 @@
 import React from 'react';
 import { Actions, Manager, SideLink } from "@twilio/flex-ui";
 import {setStatsPageState} from '../../states';
-import { StatsButtonIcon, StatsButtonIconActive } from "./StatsButtonIcon";
 
 export default class SidebarStatsButton extends React.Component {
 
@@ -20,8 +19,8 @@ export default class SidebarStatsButton extends React.Component {
 		return (
 			<SideLink
 				{...this.props}
-				icon={<StatsButtonIcon />}
-				iconActive={<StatsButtonIconActive />}
+				icon="Dashboard"
+				iconActive="DashboardBold"
 				isActive={this.props.activeView === "stats-page"}
 				onClick={this.handleClick}
 			>
