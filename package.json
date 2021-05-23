@@ -7,6 +7,8 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.11.4",
+    "date-fns": "^2.21.3",
+    "date-fns-tz": "^1.1.4",
     "flex-plugin-scripts": "4.7.7-beta.0",
     "moment-timezone": "^0.5.33",
     "ramda": "^0.27.1",

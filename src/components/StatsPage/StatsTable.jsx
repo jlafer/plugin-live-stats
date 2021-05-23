@@ -34,6 +34,7 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
+// TODO use ramda here
 function stableSort(array, comparator) {
   console.log('unsorted:', array);
   const stabilizedThis = array.map((el, index) => [el, index]);
@@ -208,6 +209,11 @@ export default function StatsTable(props) {
     setDense(event.target.checked);
   };
 
+  const sortFldForCol = (cols, orderBy) => {
+    const colDefn = cols.find(cd => cd.id === orderBy);
+    return (colDefn.sortFld) ? colDefn.sortFld : orderBy;
+  };
+
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
@@ -228,7 +234,7 @@ export default function StatsTable(props) {
               onRequestSort={handleRequestSort}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
+              {stableSort(rows, getComparator(order, sortFldForCol(cols, orderBy)))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => <StatsRow data={row} metadata={metadata} index={index} key={row[key]} />)}
               {emptyRows > 0 && (

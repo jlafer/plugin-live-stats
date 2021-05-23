@@ -1,4 +1,5 @@
-import moment from 'moment-timezone';
+import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz';
+import { differenceInSeconds } from 'date-fns';
 import * as R from 'ramda';
 
 import {
@@ -16,14 +17,19 @@ import {
 } from './actions';
 import {mapValuesOfObject} from '../helpers';
 
-const makeDtForTz = tz => utcDtStr => moment.utc(utcDtStr).tz(tz);
-// move TZ to schema
+//const makeDtForTz = tz => utcDtStr => moment.utc(utcDtStr).tz(tz);
+//const makeDt = makeDtForTz('America/Los_Angeles');
+// TODO move TZ to config
+const makeDtForTz = tz => utcDtStr => zonedTimeToUtc(utcDtStr, tz);
 const makeDt = makeDtForTz('America/Los_Angeles');
-
+const makeCurrDt = () => {
+  const dt = new Date();
+  return dt;
+}
 const initialState = {
   statsPageState: 'INACTIVE',
   intervalId: 0,
-  latestRefreshDate: moment(),
+  latestRefreshDate: makeCurrDt(),
   querySchema: {},
   queries: {},
   tasks: {},
@@ -31,7 +37,7 @@ const initialState = {
 };
 
 export default function reduce(state = initialState, action) {
-  const currDt = moment();
+  const currDt = makeCurrDt();
   
   switch (action.type) {
     case INIT_QUERIES:
@@ -83,8 +89,9 @@ const updateOrAddTaskStats = (state, payload, currDt) => {
     : addStateToTask(currDt, value);
   let tasks = R.assoc(key, newTask, state.tasks);
 
+  // TODO do i really need to update latestRefreshDate here?
   let newRefreshDate = state.latestRefreshDate;
-  const secsSinceLastRefresh = currDt.diff(state.latestRefreshDate, 'seconds');
+  const secsSinceLastRefresh = differenceInSeconds(currDt, state.latestRefreshDate);
   if (secsSinceLastRefresh > 3) {
     tasks = updateStatusAgeOfTasks(tasks, currDt);
     newRefreshDate = currDt;
@@ -99,7 +106,7 @@ const updateOrAddTaskStats = (state, payload, currDt) => {
 
 const addStateToTask = R.curry((currDt, task) => {
   const statusChangeDate = makeDt(task.date_updated);
-  const statusAge = currDt.diff(statusChangeDate, 'seconds');
+  const statusAge = differenceInSeconds(currDt, statusChangeDate);
   return {...task, statusChangeDate, statusAge}
 });
 
@@ -107,7 +114,7 @@ const updateTask = (prevTask, currTask, currDt) => {
   const statusChangeDate = (currTask.status == prevTask.status)
     ? prevTask.statusChangeDate
     : makeDt(currTask.date_updated);
-  const statusAge = currDt.diff(statusChangeDate, 'seconds');
+  const statusAge = differenceInSeconds(currDt, statusChangeDate);
   return {...currTask, statusChangeDate, statusAge};
 };
 
@@ -173,7 +180,7 @@ const updateOrAddWorkerStats = (state, payload, currDt) => {
 
 const addStateToWorker = R.curry((currDt, tasks, worker) => {
   const activityStartDt = makeDt(worker.date_updated);
-  const activityAge = currDt.diff(activityStartDt, 'seconds');
+  const activityAge = differenceInSeconds(currDt, activityStartDt);
   const workerTasks = getTasksForWorker(tasks, worker);
   return {...worker, activityStartDt, activityAge, tasks: workerTasks};
 });
@@ -189,7 +196,7 @@ const updateWorker = (prevWorker, currWorker, currDt) => {
   const activityStartDt = (currWorker.activity_name == prevWorker.activity_name)
     ? prevWorker.activityStartDt
     : makeDt(currWorker.date_updated);
-  const activityAge = currDt.diff(activityStartDt, 'seconds');
+  const activityAge = differenceInSeconds(currDt, activityStartDt);
   return {...currWorker, activityStartDt, activityAge, tasks: prevWorker.tasks};
 }
 
@@ -204,7 +211,7 @@ const updateStatusAgeOfTasks = (tasks, currDt) => {
 };
 
 const updateStatusAgeOfTask = R.curry((currDt, task) => {
-  const statusAge = currDt.diff(task.statusChangeDate, 'seconds');
+  const statusAge = differenceInSeconds(currDt, task.statusChangeDate);
   return {...task, statusAge};
 });
 
@@ -214,7 +221,7 @@ const updateActivityAgeOfWorkers = (workers, currDt) => {
 };
 
 const updateActivityAgeOfWorker = R.curry((currDt, worker) => {
-  const activityAge = currDt.diff(worker.activityStartDt, 'seconds');
+  const activityAge = differenceInSeconds(currDt, worker.activityStartDt);
   return {...worker, activityAge};
 });
 

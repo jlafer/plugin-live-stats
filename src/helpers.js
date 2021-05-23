@@ -1,5 +1,6 @@
 import {converge, curry, fromPairs, head, last, map, pair, pipe, toPairs} from 'ramda';
 import {namespace, refreshStatusAges, setQuery} from './states';
+import { formatDuration } from 'date-fns';
 
 export const initLiveQuery = async (manager, params) => {
   const {key, filters, initialCB, updateCB, removeCB} = params;
@@ -22,8 +23,6 @@ export const initLiveQuery = async (manager, params) => {
 };
 
 const buildPredString = curry( (filterDefns, filter) => {
-  console.log('------------buildPredString: filterDefns:', filterDefns);
-  console.log('------------buildPredString: filter:', filter);
   const {name, op, value} = filter;
   const filterDefn = filterDefns.find(fd => fd.name === name);
   return `data.${filterDefn.field} ${op} "${value}"`;
@@ -43,9 +42,11 @@ export const mapValuesOfObject = objMapperFn => pipe(
   fromPairs
 );
 
-export const formatSecsHHMMSS = (dt, secs) => {
-  dt.setSeconds(secs);
-  return dt.toISOString().substr(11, 8);
+export const formatSecsHHMMSS = (secs) => {
+  return formatDuration(
+    {seconds: secs},
+    {format: ['hours', 'minutes', 'seconds']}
+  );
 };
 
 export const updateStatusAges = manager => () => {
