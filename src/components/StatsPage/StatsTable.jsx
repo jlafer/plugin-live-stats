@@ -34,7 +34,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// TODO use ramda here
 function stableSort(array, comparator) {
   console.log('unsorted:', array);
   const stabilizedThis = array.map((el, index) => [el, index]);

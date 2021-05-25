@@ -1,6 +1,5 @@
 import {converge, curry, fromPairs, head, last, map, pair, pipe, toPairs} from 'ramda';
 import {namespace, refreshStatusAges, setQuery} from './states';
-import { formatDuration } from 'date-fns';
 
 export const initLiveQuery = async (manager, params) => {
   const {key, filters, initialCB, updateCB, removeCB} = params;
@@ -42,12 +41,17 @@ export const mapValuesOfObject = objMapperFn => pipe(
   fromPairs
 );
 
-export const formatSecsHHMMSS = (secs) => {
-  return formatDuration(
-    {seconds: secs},
-    {format: ['hours', 'minutes', 'seconds']}
-  );
-};
+const zeroPad2 = (num) => (num > 9) ? `${num}` : `0${num}`;
+
+export const formatDuration = (duration) => {
+  const {months, days, hours, minutes, seconds} = duration;
+  const allDays = months * 30 + days;
+  const dayStr = (allDays > 0) ? `${allDays}d ` : '';
+  const hrStr = (hours > 0) ? `${hours}h ` : '';
+  const minStr = (minutes > 0) ? `${zeroPad2(minutes)}:` : '';
+  const secStr = (seconds > 0) ? `${zeroPad2(seconds)}` : '00';
+  return `${dayStr}${hrStr}${minStr}${secStr}`;
+}
 
 export const updateStatusAges = manager => () => {
   manager.store.dispatch( refreshStatusAges() );

@@ -1,6 +1,7 @@
-import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz';
-import { differenceInSeconds } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
+import { differenceInSeconds, intervalToDuration } from 'date-fns';
 import * as R from 'ramda';
+import {formatDuration} from '../helpers';
 
 import {
   INIT_QUERIES,
@@ -87,21 +88,11 @@ const updateOrAddTaskStats = (state, payload, currDt) => {
   const newTask = (taskInState)
     ? updateTask(taskInState, value, currDt)
     : addStateToTask(currDt, value);
-  let tasks = R.assoc(key, newTask, state.tasks);
-
-  // TODO do i really need to update latestRefreshDate here?
-  let newRefreshDate = state.latestRefreshDate;
-  const secsSinceLastRefresh = differenceInSeconds(currDt, state.latestRefreshDate);
-  if (secsSinceLastRefresh > 3) {
-    tasks = updateStatusAgeOfTasks(tasks, currDt);
-    newRefreshDate = currDt;
-  }
+  const tasks = R.assoc(key, newTask, state.tasks);
 
   const workersWithTasks = updateWorkerWithTask(state.workers, newTask);
 
-  return {...state,
-    latestRefreshDate: newRefreshDate, tasks, workers: workersWithTasks
-  };
+  return {...state, tasks, workers: workersWithTasks};
 };
 
 const addStateToTask = R.curry((currDt, task) => {
@@ -211,8 +202,11 @@ const updateStatusAgeOfTasks = (tasks, currDt) => {
 };
 
 const updateStatusAgeOfTask = R.curry((currDt, task) => {
-  const statusAge = differenceInSeconds(currDt, task.statusChangeDate);
-  return {...task, statusAge};
+  const age = differenceInSeconds(currDt, task.statusChangeDate);
+  const interval = {start: task.statusChangeDate, end: currDt};
+  const duration = intervalToDuration(interval);
+  const formattedAge = formatDuration(duration);
+  return {...task, statusAge: age, formattedAge};
 });
 
 const updateActivityAgeOfWorkers = (workers, currDt) => {
@@ -221,8 +215,11 @@ const updateActivityAgeOfWorkers = (workers, currDt) => {
 };
 
 const updateActivityAgeOfWorker = R.curry((currDt, worker) => {
-  const activityAge = differenceInSeconds(currDt, worker.activityStartDt);
-  return {...worker, activityAge};
+  const age = differenceInSeconds(currDt, worker.activityStartDt);
+  const interval = {start: worker.activityStartDt, end: currDt};
+  const duration = intervalToDuration(interval);
+  const formattedAge = formatDuration(duration);
+  return {...worker, activityAge: age, formattedAge};
 });
 
 const refreshStatusAges = (state, currDt) => {
