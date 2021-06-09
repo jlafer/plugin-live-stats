@@ -134,7 +134,7 @@ const StatsRow = (props) => {
       <TableCell component="th" id={labelId} scope="row" padding="none">
         {data[cols[0].id]}
       </TableCell>
-      {cols.slice(1).map((col, idx) => <TableCell align="right" key={idx} >{data[col.id]}</TableCell>)}
+      {cols.slice(1).map((col, idx) => <TableCell align={col.numeric ? 'right' : 'left'} key={idx} >{data[col.id]}</TableCell>)}
     </TableRow>
   );
 };
@@ -186,7 +186,6 @@ export default function StatsTable(props) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState(defaultSortCol);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const handleRequestSort = (event, property) => {
@@ -222,7 +221,7 @@ export default function StatsTable(props) {
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
+            size="small"
             aria-label="enhanced table"
           >
             <EnhancedTableHead
@@ -237,7 +236,7 @@ export default function StatsTable(props) {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => <StatsRow data={row} metadata={metadata} index={index} key={row[key]} />)}
               {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                <TableRow style={{ height: 33 * emptyRows }}>
                   <TableCell colSpan={5} />
                 </TableRow>
               )}
@@ -254,10 +253,6 @@ export default function StatsTable(props) {
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
-      />
       {filterDefns.map(fd => <FilterSelect qryName={name} filterDefn={fd} filters={filters} classes={classes} key={fd.name} />)}
     </div>
   );
