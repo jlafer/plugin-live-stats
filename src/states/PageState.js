@@ -18,8 +18,6 @@ import {
 } from './actions';
 import {mapValuesOfObject} from '../helpers';
 
-//const makeDtForTz = tz => utcDtStr => moment.utc(utcDtStr).tz(tz);
-//const makeDt = makeDtForTz('America/Los_Angeles');
 // TODO move TZ to config
 const makeDtForTz = tz => utcDtStr => zonedTimeToUtc(utcDtStr, tz);
 const makeDt = makeDtForTz('America/Los_Angeles');
@@ -177,7 +175,7 @@ const addStateToWorker = R.curry((currDt, tasks, worker) => {
 });
 
 const isWorkerSidEqual = R.curry(
-  (worker_sid, task) => task.worker_sid = worker_sid
+  (worker_sid, task) => task.worker_sid == worker_sid
 );
 
 const getTasksForWorker = (tasks, worker) =>
