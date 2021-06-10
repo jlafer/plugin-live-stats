@@ -1,8 +1,6 @@
-#overflowCode {
-  overflow-y: scroll;
-  height:450px;
+.statsTbl {
+  margin: 20px;
 }
-
-#wrapPendingButton {
-  background: 'd02020';
+.statsTitle {
+  font-size: 30px;
 }
