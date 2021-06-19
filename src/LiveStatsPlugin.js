@@ -15,12 +15,29 @@ const PLUGIN_NAME = 'LiveStatsPlugin';
 const baseSchema = {
   workers: {
     index: 'tr-worker',
-    columns: [],
+    key: 'sid',
+    columns: [
+      { id: 'agentName', numeric: false, disablePadding: true, label: 'Name' },
+      { id: 'activityStr', numeric: false, disablePadding: false, label: 'Activity' },
+      { id: 'formattedAge', numeric: true, disablePadding: false, label: 'Activity Time', sortFld: 'activityAge' },
+      { id: 'tasksStr', numeric: false, disablePadding: false, label: 'Tasks' },
+      { id: 'skillsStr', numeric: false, disablePadding: false, label: 'Skills' }
+    ],
+    defaultSortCol: 'agentName',
     filterDefns: []
   },
   tasks: {
     index: 'tr-task',
-    columns: [],
+    key: 'sid',
+    columns: [
+      { id: 'from', numeric: false, disablePadding: true, label: 'From' },
+      { id: 'status', numeric: false, disablePadding: true, label: 'Status' },
+      { id: 'queue_name', numeric: false, disablePadding: true, label: 'Queue' },
+      { id: 'formattedAge', numeric: true, disablePadding: false, label: 'Task Time', sortFld: 'statusAge' },
+      { id: 'channel_type', numeric: false, disablePadding: false, label: 'Channel' },
+      { id: 'worker_name', numeric: false, disablePadding: false, label: 'Agent' },
+    ],
+    defaultSortCol: 'queue_name',
     filterDefns: []
   }
 };

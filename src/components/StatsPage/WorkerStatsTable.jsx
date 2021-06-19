@@ -19,23 +19,11 @@ const formatRow = R.curry((tasks, worker) => {
   const tasksStr = tasksFrmtd.join('; ');
   const skills = (routing && routing.skills) ? routing.skills : [];
   const skillsStr = skills.join(', ');
-  return {sid, agentName, activityStr, formattedAge, tasksStr, skillsStr};
+  return {sid, agentName, activityStr, activityAge, formattedAge, tasksStr, skillsStr};
 });
 
-const metadata = {
-  key: 'sid',
-  cols: [
-    { id: 'agentName', numeric: false, disablePadding: true, label: 'Name' },
-    { id: 'activityStr', numeric: false, disablePadding: false, label: 'Activity' },
-    { id: 'formattedAge', numeric: true, disablePadding: false, label: 'Activity Time', sortFld: 'activityAge' },
-    { id: 'tasksStr', numeric: false, disablePadding: false, label: 'Tasks' },
-    { id: 'skillsStr', numeric: false, disablePadding: false, label: 'Skills' }
-  ],
-  defaultSortCol: 'agentName'
-};
-
 export default function WorkersTable(props) {
-  const {workers, tasks, query, queryDefn} = props;
+  const {workers, tasks, query, schema} = props;
   const rows = R.values(workers).map(formatRow(tasks));
-  return <StatsTable name="workers" data={rows} metadata={metadata} query={query} queryDefn={queryDefn} /> ;
+  return <StatsTable name="workers" data={rows} schema={schema} query={query} /> ;
 }

@@ -10,21 +10,8 @@ const formatRow = (task) => {
   return {sid, from, status, queue_name, formattedAge, statusAge, channel_type, worker_name};
 };
 
-const metadata = {
-  key: 'sid',
-  cols: [
-    { id: 'from', numeric: false, disablePadding: true, label: 'From' },
-    { id: 'status', numeric: false, disablePadding: true, label: 'Status' },
-    { id: 'queue_name', numeric: false, disablePadding: true, label: 'Queue' },
-    { id: 'formattedAge', numeric: true, disablePadding: false, label: 'Task Time', sortFld: 'statusAge' },
-    { id: 'channel_type', numeric: false, disablePadding: false, label: 'Channel' },
-    { id: 'worker_name', numeric: false, disablePadding: false, label: 'Agent' },
-  ],
-  defaultSortCol: 'queue_name'
-};
-
 export default function TasksTable(props) {
-  const {tasks, query, queryDefn} = props;
+  const {tasks, query, schema} = props;
   const rows = R.values(tasks).map(formatRow);
-  return <StatsTable name="tasks" data={rows} metadata={metadata} query={query} queryDefn={queryDefn} /> ;
+  return <StatsTable name="tasks" data={rows} schema={schema} query={query} /> ;
 }

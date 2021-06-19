@@ -11,11 +11,11 @@ export default function StatsPage (props) {
     <div>
       <div className="statsTbl">
         <h2 className="statsTitle">Tasks</h2>
-        <TaskStatsTable tasks={tasks} query={queries.tasks} queryDefn={schema.tasks}/>
+        <TaskStatsTable tasks={tasks} query={queries.tasks} schema={schema.tasks}/>
       </div>
       <div className="statsTbl">
         <h2 className="statsTitle">Agents</h2>
-        <WorkerStatsTable workers={workers} tasks={tasks} query={queries.workers} queryDefn={schema.workers}/>
+        <WorkerStatsTable workers={workers} tasks={tasks} query={queries.workers} schema={schema.workers}/>
       </div>
     </div>
   );

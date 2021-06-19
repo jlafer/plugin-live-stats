@@ -47,7 +47,7 @@ function stableSort(array, comparator) {
 }
 
 function EnhancedTableHead(props) {
-  const { cols, classes, order, orderBy, onRequestSort } = props;
+  const { columns, classes, order, orderBy, onRequestSort } = props;
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -55,7 +55,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        {cols.map((headCell) => (
+        {columns.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
@@ -120,8 +120,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const StatsRow = (props) => {
-  const {data, metadata, index} = props;
-  const {cols, defaultSortCol} = metadata;
+  const {data, schema, index} = props;
+  const {columns, defaultSortCol} = schema;
   const labelId = `enhanced-table-checkbox-${index}`;
 
   return (
@@ -132,9 +132,9 @@ const StatsRow = (props) => {
       key={data[defaultSortCol]}
     >
       <TableCell component="th" id={labelId} scope="row" padding="none">
-        {data[cols[0].id]}
+        {data[columns[0].id]}
       </TableCell>
-      {cols.slice(1).map((col, idx) => <TableCell align={col.numeric ? 'right' : 'left'} key={idx} >{data[col.id]}</TableCell>)}
+      {columns.slice(1).map((col, idx) => <TableCell align={col.numeric ? 'right' : 'left'} key={idx} >{data[col.id]}</TableCell>)}
     </TableRow>
   );
 };
@@ -174,12 +174,11 @@ const FilterSelect = (props) => {
 
 export default function StatsTable(props) {
   console.log('----------------StatsTable: props', props);
-  const {name, data, metadata, query, queryDefn} = props;
+  const {name, data, schema, query} = props;
   if (!query)
     return null;
   const {filters} = query;
-  const {filterDefns} = queryDefn;
-  const {cols, key, defaultSortCol} = metadata;
+  const {columns, key, defaultSortCol, filterDefns} = schema;
   const rows = data;
 
   const classes = useStyles();
@@ -203,12 +202,8 @@ export default function StatsTable(props) {
     setPage(0);
   };
 
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
-  };
-
-  const sortFldForCol = (cols, orderBy) => {
-    const colDefn = cols.find(cd => cd.id === orderBy);
+  const sortFldForCol = (columns, orderBy) => {
+    const colDefn = columns.find(cd => cd.id === orderBy);
     return (colDefn.sortFld) ? colDefn.sortFld : orderBy;
   };
 
@@ -225,16 +220,16 @@ export default function StatsTable(props) {
             aria-label="enhanced table"
           >
             <EnhancedTableHead
-              cols={cols}
+              columns={columns}
               classes={classes}
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
             />
             <TableBody>
-              {stableSort(rows, getComparator(order, sortFldForCol(cols, orderBy)))
+              {stableSort(rows, getComparator(order, sortFldForCol(columns, orderBy)))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => <StatsRow data={row} metadata={metadata} index={index} key={row[key]} />)}
+                .map((row, index) => <StatsRow data={row} schema={schema} index={index} key={row[key]} />)}
               {emptyRows > 0 && (
                 <TableRow style={{ height: 33 * emptyRows }}>
                   <TableCell colSpan={5} />
