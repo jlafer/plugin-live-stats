@@ -61,8 +61,8 @@ export const setIntervalId = (payload) => ({
   type: SET_INTERVAL_ID, payload
 });
 
-export const initQueries = (querySchema) => ({
-  type: INIT_QUERIES, payload: querySchema
+export const initQueries = (schema) => ({
+  type: INIT_QUERIES, payload: schema
 });
 
 export const setQuery = (key, instance, filters) => ({

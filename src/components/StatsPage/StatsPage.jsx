@@ -6,16 +6,16 @@ import WorkerStatsTable from './WorkerStatsTable';
 
 export default function StatsPage (props) {
   const {pageState} = props;
-  const {tasks, workers, queries, querySchema} = pageState;
+  const {tasks, workers, queries, schema} = pageState;
   return (
     <div>
       <div className="statsTbl">
         <h2 className="statsTitle">Tasks</h2>
-        <TaskStatsTable tasks={tasks} query={queries.tasks} queryDefn={querySchema.tasks}/>
+        <TaskStatsTable tasks={tasks} query={queries.tasks} queryDefn={schema.tasks}/>
       </div>
       <div className="statsTbl">
         <h2 className="statsTitle">Agents</h2>
-        <WorkerStatsTable workers={workers} tasks={tasks} query={queries.workers} queryDefn={querySchema.workers}/>
+        <WorkerStatsTable workers={workers} tasks={tasks} query={queries.workers} queryDefn={schema.workers}/>
       </div>
     </div>
   );

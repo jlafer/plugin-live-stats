@@ -65,4 +65,12 @@ appConfig.js
 pluginsService.js
 build/
 
+# design and configuration-related files
 notes.txt
+config.txt
+cfg.json
+
+*.png
+
+# Mac files
+.DS_Store

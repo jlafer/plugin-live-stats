@@ -4,13 +4,13 @@ import {namespace, refreshStatusAges, setQuery} from './states';
 export const initLiveQuery = async (manager, params) => {
   const {key, filters, initialCB, updateCB, removeCB} = params;
   const pageState = manager.store.getState()[namespace].pageState;
-  const {querySchema, queries} = pageState;
+  const {schema, queries} = pageState;
   const query = queries && queries[key];
   if (!!query) {
     manager.store.dispatch( setQuery(key, null, []) );
     await query.instance.close();
   }
-  const queryDefn = querySchema[key];
+  const queryDefn = schema[key];
   const {index, filterDefns} = queryDefn;
   const queryStr = filtersToQueryString(filterDefns, filters);
   const instance = await manager.insightsClient.liveQuery(index, queryStr);

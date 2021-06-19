@@ -29,7 +29,7 @@ const initialState = {
   statsPageState: 'INACTIVE',
   intervalId: 0,
   latestRefreshDate: makeCurrDt(),
-  querySchema: {},
+  schema: {},
   queries: {},
   tasks: {},
   workers: {}
@@ -40,7 +40,7 @@ export default function reduce(state = initialState, action) {
   
   switch (action.type) {
     case INIT_QUERIES:
-      return {...state, querySchema: action.payload};
+      return {...state, schema: action.payload};
     case SET_QUERY:
       return {...state, queries: setQuery(state.queries, action.payload)};
     case UPDATE_STATUS_AGES:
