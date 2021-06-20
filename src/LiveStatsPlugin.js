@@ -63,13 +63,16 @@ const addWorkerActivityFilterDefn = (store, schema) => {
 
 const addConfigurationToSchema = (schema, config) => {
   const {tasks, workers} = schema;
-  const tasksConfigured = addFilterDefnsToTbl(tasks, config.tasks);
-  const workersConfigured = addFilterDefnsToTbl(workers, config.workers);
+  const tasksConfigured = addConfigurationToTbl(tasks, config.tasks);
+  const workersConfigured = addConfigurationToTbl(workers, config.workers);
   return {tasks: tasksConfigured, workers: workersConfigured};
 };
 
-const addFilterDefnsToTbl = (curr, toAdd) => {
-  return {...curr, filterDefns: R.concat(curr.filterDefns, toAdd.filterDefns)}
+const addConfigurationToTbl = (curr, toAdd) => {
+  return {...curr,
+    filterDefns: R.concat(curr.filterDefns, toAdd.filterDefns),
+    columns: R.concat(curr.columns, toAdd.columns)
+  }
 };
 
 export default class LiveStatsPlugin extends FlexPlugin {

@@ -11,6 +11,7 @@
     "date-fns-tz": "^1.1.4",
     "flex-plugin-scripts": "^4.9.1-beta.0",
     "jlafer-flex-util": "0.0.11",
+    "jlafer-fnal-util": "^1.0.5",
     "ramda": "^0.27.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"

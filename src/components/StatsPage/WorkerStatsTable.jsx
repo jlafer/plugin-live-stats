@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 import React from 'react';
 
+import {makeCustomColumnData} from '../../helpers';
 import StatsTable from './StatsTable';
 
 const formatTask = R.curry((tasks, task_sid) => {
@@ -10,7 +11,7 @@ const formatTask = R.curry((tasks, task_sid) => {
   return `${channel_unique_name} from ${from} via ${queue_name} [${status} for ${statusAge} secs]`;
 });
 
-const formatRow = R.curry((tasks, worker) => {
+const formatRow = R.curry((schema, tasks, worker) => {
   const {worker_sid: sid, activity_name, activityAge, formattedAge, attributes, tasks: workerTaskSids} = worker;
   const taskCnt = workerTaskSids.length;
   const activityStr = (taskCnt === 0) ? activity_name : `${activity_name} - on task`;
@@ -19,11 +20,17 @@ const formatRow = R.curry((tasks, worker) => {
   const tasksStr = tasksFrmtd.join('; ');
   const skills = (routing && routing.skills) ? routing.skills : [];
   const skillsStr = skills.join(', ');
-  return {sid, agentName, activityStr, activityAge, formattedAge, tasksStr, skillsStr};
+  const customData = makeCustomColumnData(schema, worker);
+  const row = {
+    sid, agentName, activityStr, activityAge, formattedAge, tasksStr, skillsStr,
+    ...customData
+  };
+  console.log('-----------formatRow.worker: returning:', row);
+  return row;
 });
 
 export default function WorkersTable(props) {
   const {workers, tasks, query, schema} = props;
-  const rows = R.values(workers).map(formatRow(tasks));
+  const rows = R.values(workers).map(formatRow(schema, tasks));
   return <StatsTable name="workers" data={rows} schema={schema} query={query} /> ;
 }

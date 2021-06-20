@@ -1,5 +1,20 @@
-import {converge, curry, fromPairs, head, last, map, pair, pipe, toPairs} from 'ramda';
+import {
+  converge, curry, fromPairs, head, last, map, pair, path, pipe, propEq,
+  split, toPairs
+} from 'ramda';
+import {kvListToObj} from 'jlafer-fnal-util'
 import {namespace, refreshStatusAges, setQuery} from './states';
+
+const idValueListToObj = kvListToObj('id', 'value');
+const makePathList = split('.');
+
+export const makeCustomColumnData = (schema, rowData) => {
+  const idValueList = schema.columns.filter(propEq('type', 'custom'))
+    .map(col => {
+      return {id: col.id, value: path( makePathList(col.field), rowData )}
+    });
+  return idValueListToObj(idValueList);
+};
 
 export const initLiveQuery = async (manager, params) => {
   const {key, filters, initialCB, updateCB, removeCB} = params;
