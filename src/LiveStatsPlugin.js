@@ -93,6 +93,7 @@ export default class LiveStatsPlugin extends FlexPlugin {
 
   init(flex, manager) {
     console.log(`${PLUGIN_NAME}: initializing in Flex ${Flex.VERSION} instance`);
+    
     const {store} = manager;
     store.addReducer(namespace, reducers);
     const rawConfig = getPluginConfiguration(manager, 'plugin_live_stats');
