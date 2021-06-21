@@ -1,32 +1,17 @@
 import * as R from 'ramda';
 
-export function verifyAndFillConfiguration(cfg) {
-  if (! cfg)
-    throw new Error(`LiveStatsPlugin: attributes.plugin_live_stats NOT configured. See README for instructions.`);
-  const workers = verifyAndFillTblConfig(cfg, 'workers');
-  const tasks = verifyAndFillTblConfig(cfg, 'tasks');
-  return {workers, tasks};
-}
-
-const verifyAndFillTblConfig = (cfg, key) => {
-  if (!cfg[key])
-    throw new Error(`LiveStatsPlugin: attributes.plugin_live_stats missing property ${key}. See README for instructions.`);
-  const {columns, filterDefns} = cfg[key];
-  return {...cfg[key], columns: columns};
-}
-
 const baseSchema = {
   workers: {
     index: 'tr-worker',
     key: 'sid',
     columns: [
-      { id: 'agentName', numeric: false, disablePadding: true, label: 'Name' },
-      { id: 'activityStr', numeric: false, disablePadding: false, label: 'Activity' },
-      { id: 'formattedAge', numeric: true, disablePadding: false, label: 'Activity Time', sortFld: 'activityAge' },
-      { id: 'tasksStr', numeric: false, disablePadding: false, label: 'Tasks' },
-      { id: 'skillsStr', numeric: false, disablePadding: false, label: 'Skills' }
+      { id: 'agent_name', numeric: false, disablePadding: true, label: 'Name' },
+      { id: 'activity_str', numeric: false, disablePadding: false, label: 'Activity' },
+      { id: 'formatted_age', numeric: true, disablePadding: false, label: 'Activity Time', sortFld: 'activityAge' },
+      { id: 'tasks_str', numeric: false, disablePadding: false, label: 'Tasks' },
+      { id: 'skills_str', numeric: false, disablePadding: false, label: 'Skills' }
     ],
-    defaultSortCol: 'agentName',
+    defaultSortCol: 'agent_name',
     filterDefns: []
   },
   tasks: {
@@ -36,7 +21,7 @@ const baseSchema = {
       { id: 'from', numeric: false, disablePadding: true, label: 'From' },
       { id: 'status', numeric: false, disablePadding: true, label: 'Status' },
       { id: 'queue_name', numeric: false, disablePadding: true, label: 'Queue' },
-      { id: 'formattedAge', numeric: true, disablePadding: false, label: 'Task Time', sortFld: 'statusAge' },
+      { id: 'formatted_age', numeric: true, disablePadding: false, label: 'Task Time', sortFld: 'statusAge' },
       { id: 'channel_type', numeric: false, disablePadding: false, label: 'Channel' },
       { id: 'worker_name', numeric: false, disablePadding: false, label: 'Agent' },
     ],
@@ -55,6 +40,21 @@ const baseSchema = {
     ],
   }
 };
+
+export function verifyAndFillConfiguration(cfg) {
+  if (! cfg)
+    throw new Error(`LiveStatsPlugin: attributes.plugin_live_stats NOT configured. See README for instructions.`);
+  const workers = verifyAndFillTblConfig(cfg, 'workers');
+  const tasks = verifyAndFillTblConfig(cfg, 'tasks');
+  return {workers, tasks};
+}
+
+const verifyAndFillTblConfig = (cfg, key) => {
+  if (!cfg[key])
+    throw new Error(`LiveStatsPlugin: attributes.plugin_live_stats missing property ${key}. See README for instructions.`);
+  const {columns} = cfg[key];
+  return {...cfg[key], columns: columns};
+}
 
 const nameToNameAndLabelObj = (name, nameToLabelFn) => {
   const label = nameToLabelFn ? nameToLabelFn(name) : name;

@@ -14,17 +14,17 @@ const formatTask = R.curry((tasks, task_sid) => {
 const formatRow = R.curry((schema, tasks, worker) => {
   console.log('-----------formatRow.worker: schema:', schema);
   console.log('-----------formatRow.worker: worker:', worker);
-  const {worker_sid: sid, activity_name, activityAge, formattedAge, attributes, tasks: workerTaskSids} = worker;
+  const {worker_sid: sid, activity_name, activityAge, formatted_age, attributes, tasks: workerTaskSids} = worker;
   const taskCnt = workerTaskSids.length;
-  const activityStr = (taskCnt === 0) ? activity_name : `${activity_name} - on task`;
-  const {full_name: agentName, routing} = attributes;
+  const activity_str = (taskCnt === 0) ? activity_name : `${activity_name} - on task`;
+  const {full_name: agent_name, routing} = attributes;
   const tasksFrmtd = workerTaskSids.map(formatTask(tasks));
-  const tasksStr = tasksFrmtd.join('; ');
+  const tasks_str = tasksFrmtd.join('; ');
   const skills = (routing && routing.skills) ? routing.skills : [];
-  const skillsStr = skills.join(', ');
+  const skills_str = skills.join(', ');
   const customData = makeCustomColumnData(schema, worker);
   const row = {
-    sid, agentName, activityStr, activityAge, formattedAge, tasksStr, skillsStr,
+    sid, agent_name, activity_str, activityAge, formatted_age, tasks_str, skills_str,
     ...customData
   };
   console.log('-----------formatRow.worker: returning:', row);

@@ -203,8 +203,8 @@ const updateStatusAgeOfTask = R.curry((currDt, task) => {
   const age = differenceInSeconds(currDt, task.statusChangeDate);
   const interval = {start: task.statusChangeDate, end: currDt};
   const duration = intervalToDuration(interval);
-  const formattedAge = formatDuration(duration);
-  return {...task, statusAge: age, formattedAge};
+  const formatted_age = formatDuration(duration);
+  return {...task, statusAge: age, formatted_age};
 });
 
 const updateActivityAgeOfWorkers = (workers, currDt) => {
@@ -216,8 +216,8 @@ const updateActivityAgeOfWorker = R.curry((currDt, worker) => {
   const age = differenceInSeconds(currDt, worker.activityStartDt);
   const interval = {start: worker.activityStartDt, end: currDt};
   const duration = intervalToDuration(interval);
-  const formattedAge = formatDuration(duration);
-  return {...worker, activityAge: age, formattedAge};
+  const formatted_age = formatDuration(duration);
+  return {...worker, activityAge: age, formatted_age};
 });
 
 const refreshStatusAges = (state, currDt) => {
