@@ -72,19 +72,28 @@ const addWorkerActivityFilterDefn = (store, schema) => {
   return {...schema, workers: workersSchemaWithActivity}
 };
 
-const addConfigurationToSchema = (schema, config) => {
-  const {tasks, workers} = schema;
+const addConfigurationToSchema = (base, config) => {
+  const {tasks, workers} = base;
   const tasksConfigured = addConfigurationToTbl(tasks, config.tasks);
   const workersConfigured = addConfigurationToTbl(workers, config.workers);
   return {tasks: tasksConfigured, workers: workersConfigured};
 };
 
-const addConfigurationToTbl = (curr, toAdd) => {
-  return {...curr,
-    filterDefns: R.concat(curr.filterDefns, toAdd.filterDefns),
-    columns: R.concat(curr.columns, toAdd.columns)
+const addConfigurationToTbl = (base, toAdd) => {
+  return {...base,
+    filterDefns: R.concat(base.filterDefns, toAdd.filterDefns),
+    columns: mergeColumns(base.columns, toAdd.columns)
   }
 };
+
+const mergeColumns = (baseCols, cfgCols) => {
+  return R.map( mergeColumn(baseCols), cfgCols )
+};
+
+const mergeColumn = R.curry((baseCols, cfgCol) => {
+  const baseCol = R.find(col => col.id === cfgCol.id, baseCols);
+  return R.mergeDeepRight(baseCol, cfgCol);
+});
 
 export default class LiveStatsPlugin extends FlexPlugin {
   constructor() {
@@ -93,7 +102,6 @@ export default class LiveStatsPlugin extends FlexPlugin {
 
   init(flex, manager) {
     console.log(`${PLUGIN_NAME}: initializing in Flex ${Flex.VERSION} instance`);
-    
     const {store} = manager;
     store.addReducer(namespace, reducers);
     const rawConfig = getPluginConfiguration(manager, 'plugin_live_stats');

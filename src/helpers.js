@@ -1,5 +1,5 @@
 import {
-  converge, curry, fromPairs, head, last, map, pair, path, pipe, propEq,
+  converge, curry, fromPairs, has, head, last, map, pair, path, pipe,
   split, toPairs
 } from 'ramda';
 import {kvListToObj} from 'jlafer-fnal-util'
@@ -9,8 +9,9 @@ const idValueListToObj = kvListToObj('id', 'value');
 const makePathList = split('.');
 
 export const makeCustomColumnData = (schema, rowData) => {
-  const idValueList = schema.columns.filter(propEq('type', 'custom'))
+  const idValueList = schema.columns.filter(has('field'))
     .map(col => {
+      console.log('------------makeCustomColumnData: col:', col);
       return {id: col.id, value: path( makePathList(col.field), rowData )}
     });
   return idValueListToObj(idValueList);

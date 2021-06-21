@@ -12,6 +12,8 @@ const formatTask = R.curry((tasks, task_sid) => {
 });
 
 const formatRow = R.curry((schema, tasks, worker) => {
+  console.log('-----------formatRow.worker: schema:', schema);
+  console.log('-----------formatRow.worker: worker:', worker);
   const {worker_sid: sid, activity_name, activityAge, formattedAge, attributes, tasks: workerTaskSids} = worker;
   const taskCnt = workerTaskSids.length;
   const activityStr = (taskCnt === 0) ? activity_name : `${activity_name} - on task`;
