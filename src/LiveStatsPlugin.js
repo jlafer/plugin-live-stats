@@ -38,7 +38,18 @@ const baseSchema = {
       { id: 'worker_name', numeric: false, disablePadding: false, label: 'Agent' },
     ],
     defaultSortCol: 'queue_name',
-    filterDefns: []
+    filterDefns: [
+      {
+        name: 'status', label: 'Status', field: 'status',
+        options: [
+          {label: 'All', name: 'All'},
+          {label: 'Queued', name: 'pending'},
+          {label: 'Alerting', name: 'reserved'},
+          {label: 'Assigned', name: 'assigned'},
+          {label: 'Wrapping', name: 'wrapping'}
+        ]
+      }
+    ],
   }
 };
 
@@ -49,7 +60,7 @@ const nameToNameAndLabelObj = (name, nameToLabelFn) => {
 
 const addWorkerActivityFilterDefn = (store, schema) => {
   const {workers} = schema;
-  const {columns, filterDefns} = workers;
+  const {filterDefns} = workers;
   const activities = Object.fromEntries(store.getState().flex.worker.activities);
   const activityOptions = R.pipe(R.values, R.map(R.prop('name')), R.map(nameToNameAndLabelObj), R.append({name: 'All', label: 'All'}))(activities);
   const activityFilter = {
