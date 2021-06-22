@@ -9,7 +9,8 @@ const baseSchema = {
       { id: 'activity_str', numeric: false, disablePadding: false, label: 'Activity' },
       { id: 'formatted_age', numeric: true, disablePadding: false, label: 'Activity Time', sortFld: 'activityAge' },
       { id: 'tasks_str', numeric: false, disablePadding: false, label: 'Tasks' },
-      { id: 'skills_str', numeric: false, disablePadding: false, label: 'Skills' }
+      { id: 'skills_str', numeric: false, disablePadding: false, label: 'Skills' },
+      { id: 'contact_uri', numeric: false, disablePadding: false, label: 'URI' }
     ],
     defaultSortCol: 'agent_name',
     filterDefns: []
