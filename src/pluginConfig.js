@@ -29,7 +29,7 @@ const baseSchema = {
     defaultSortCol: 'queue_name',
     filterDefns: [
       {
-        name: 'status', label: 'Status', field: 'status',
+        name: 'status', label: 'Status', field: 'status', defaultOption: 'pending',
         options: [
           {label: 'All', name: 'All'},
           {label: 'Queued', name: 'pending'},
@@ -53,9 +53,55 @@ export function verifyAndFillConfiguration(cfg) {
 const verifyAndFillTblConfig = (cfg, key) => {
   if (!cfg[key])
     throw new Error(`LiveStatsPlugin: attributes.plugin_live_stats missing property ${key}. See README for instructions.`);
-  const {columns} = cfg[key];
-  return {...cfg[key], columns: columns};
+  const {columns, filterDefns} = cfg[key];
+  const filledColumns = R.map(verifyAndFillColumn, columns);
+  const filledFilterDefns = R.map(verifyAndFillFilterDefn, filterDefns);
+  return {...cfg[key], columns: filledColumns, filterDefns: filledFilterDefns};
 }
+
+const verifyAndFillColumn = (col) => {
+  requiredProp('column', col, 'id');
+  const numeric = optionalProp('column', col, 'numeric', {validValues: [true, false], defaultValue: false});
+  const disablePadding = optionalProp('column', col, 'disablePadding', {validValues: [true, false], defaultValue: true});
+  return {...col, numeric, disablePadding};
+};
+
+const verifyAndFillFilterDefn = (defn) => {
+  requiredProp('filterDefn', defn, 'name');
+  requiredProp('filterDefn', defn, 'label');
+  requiredProp('filterDefn', defn, 'field');
+  requiredProp('filterDefn', defn, 'options');
+  const defaultOption = optionalProp('filterDefn', defn, 'defaultOption', {defaultValue: 'All'});
+  // TODO we could extract values from options and verify defaultOption is in the list
+  return {...defn, defaultOption};
+};
+
+const requiredProp = (label, obj, key, options) => {
+  if (! obj[key])
+    throw new Error(`${key} is a required property in ${label}`);
+  const value = obj[key];
+  if ( ! validValue(value, options) )
+    throw new Error(`${value} is an invalid value for ${key} in ${label}`);
+};
+
+const optionalProp = (label, obj, key, options) => {
+  const value = obj[key] ? obj[key] : getAltValue(options);
+  if ( ! validValue(value, options) )
+    throw new Error(`${value} is an invalid value for ${key} in ${label}`);
+  return value;
+};
+
+const getAltValue = (options) => {
+  if (!options)
+    return undefined;
+  return options.defaultValue;
+};
+
+const validValue = (value, options) => {
+  if (!options)
+    return true;
+  return ( !options.validValues || R.includes(value, options.validValues) || value === 'All' )
+};
 
 const nameToNameAndLabelObj = (name, nameToLabelFn) => {
   const label = nameToLabelFn ? nameToLabelFn(name) : name;
@@ -68,7 +114,7 @@ export const addWorkerActivityFilterDefn = (store) => {
   const activities = Object.fromEntries(store.getState().flex.worker.activities);
   const activityOptions = R.pipe(R.values, R.map(R.prop('name')), R.map(nameToNameAndLabelObj), R.append({name: 'All', label: 'All'}))(activities);
   const activityFilter = {
-    name: 'activity', label: 'Activity', field: 'activity_name',
+    name: 'activity', label: 'Activity', field: 'activity_name', defaultOption: 'All',
     options: activityOptions
   };
   const filterDefnsWithActivity = R.append(activityFilter, filterDefns);

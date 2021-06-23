@@ -4,7 +4,7 @@ import * as R from 'ramda';
 import {formatDuration} from '../helpers';
 
 import {
-  INIT_QUERIES,
+  INIT_SCHEMA,
   SET_INTERVAL_ID,
   SET_QUERY,
   SET_STATS_PAGE_STATE,
@@ -39,7 +39,7 @@ export default function reduce(state = initialState, action) {
   const currDt = makeCurrDt();
   
   switch (action.type) {
-    case INIT_QUERIES:
+    case INIT_SCHEMA:
       return {...state, schema: action.payload};
     case SET_QUERY:
       return {...state, queries: setQuery(state.queries, action.payload)};

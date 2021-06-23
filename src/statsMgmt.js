@@ -5,25 +5,29 @@ import {
   initiateWorkerStats, updateWorkerStats, removeWorkerStats, setIntervalId
 } from "./states";
 
-export const startLiveQueries = (manager) => {
+export const startLiveQueries = (manager, schema) => {
+  const {tasks, workers} = schema;
+
   startQuery(
     manager,
     'workers',
-    [
-      {name: 'activity', op: '==', value: 'Available'},
-      {name: 'team', op: '==', value: 'All'}
-    ]
+    makeFiltersFromDefns(workers.filterDefns)
   );
   startQuery(
     manager,
     'tasks',
-    [
-      {name: 'status', op: '==', value: 'pending'}
-    ]
+    makeFiltersFromDefns(tasks.filterDefns)
   );
   const intervalId = setInterval(updateStatusAges(manager), 5000);
   const {store} = manager;
   store.dispatch( setIntervalId(intervalId) )
+};
+
+const makeFiltersFromDefns = (filterDefns) => {
+  return filterDefns.map(defn => {
+    const {name, defaultOption} = defn;
+    return {name,  op: '==', value: defaultOption}
+  })
 };
 
 const initialTasksCB = (args) => {
@@ -64,7 +68,6 @@ const callbacks = {
 };
 
 export const startQuery = (manager, key, filters) => {
-  console.log('---------startQuery: key', key);
   const qryCBs = callbacks[key];
   const {initialCB, updateCB, removeCB} = qryCBs;
   initLiveQuery(

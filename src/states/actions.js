@@ -2,7 +2,7 @@ export const SET_SERVERLESS_URI = 'SET_SERVERLESS_URI';
 export const SET_CURRENT_TASK = 'SET_CURRENT_TASK';
 export const SET_SYNC_TOKEN = 'SET_SYNC_TOKEN';
 
-export const INIT_QUERIES = 'INIT_QUERIES';
+export const INIT_SCHEMA = 'INIT_SCHEMA';
 export const SET_INTERVAL_ID = 'SET_INTERVAL_ID';
 export const SET_QUERY = 'SET_QUERY';
 export const SET_STATS_PAGE_STATE = 'SET_STATS_PAGE_STATE';

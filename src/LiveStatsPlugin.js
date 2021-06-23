@@ -5,7 +5,7 @@ import {getPluginConfiguration} from 'jlafer-flex-util';
 
 import StatsPage from "./components/StatsPage/StatsPageContainer";
 import SidebarStatsButton from './components/SidebarStatsButton/SidebarStatsButton';
-import reducers, {namespace, initQueries} from './states';
+import reducers, {namespace, initSchema} from './states';
 import {startLiveQueries} from './statsMgmt';
 import {
   addConfigurationToSchema, addWorkerActivityFilterDefn, verifyAndFillConfiguration
@@ -28,8 +28,8 @@ export default class LiveStatsPlugin extends FlexPlugin {
     const schemaWithWorkerActivityFilter = addWorkerActivityFilterDefn(store);
     const schema = addConfigurationToSchema(schemaWithWorkerActivityFilter, config);
     console.log(`${PLUGIN_NAME}: schema:`, schema);
-    manager.store.dispatch( initQueries(schema) );
-    startLiveQueries(manager);
+    manager.store.dispatch( initSchema(schema) );
+    startLiveQueries(manager, schema);
 
     // add a side-navigation button for presenting the StatsPage
     flex.SideNav.Content.add(<SidebarStatsButton key="stats" />);

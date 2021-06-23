@@ -5,13 +5,14 @@ import {
 import {kvListToObj} from 'jlafer-fnal-util'
 import {namespace, refreshStatusAges, setQuery} from './states';
 
+export const decodeContactUri = (uri) => uri.replace('_2B', '+').replace('_2D', '-').replace('_40', '@').replace('_2E', '.');
+
 const idValueListToObj = kvListToObj('id', 'value');
 const makePathList = split('.');
 
 export const makeCustomColumnData = (schema, rowData) => {
   const idValueList = schema.columns.filter(has('field'))
     .map(col => {
-      console.log('------------makeCustomColumnData: col:', col);
       return {id: col.id, value: path( makePathList(col.field), rowData )}
     });
   return idValueListToObj(idValueList);

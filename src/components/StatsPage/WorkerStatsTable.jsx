@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import React from 'react';
 
-import {makeCustomColumnData} from '../../helpers';
+import {decodeContactUri, makeCustomColumnData} from '../../helpers';
 import StatsTable from './StatsTable';
 
 const formatTask = R.curry((tasks, task_sid) => {
@@ -12,8 +12,6 @@ const formatTask = R.curry((tasks, task_sid) => {
 });
 
 const formatRow = R.curry((schema, tasks, worker) => {
-  console.log('-----------formatRow.worker: schema:', schema);
-  console.log('-----------formatRow.worker: worker:', worker);
   const {worker_sid: sid, activity_name, activityAge, formatted_age, attributes, tasks: workerTaskSids} = worker;
   const taskCnt = workerTaskSids.length;
   const activity_str = (taskCnt === 0) ? activity_name : `${activity_name} - on task`;
@@ -25,14 +23,12 @@ const formatRow = R.curry((schema, tasks, worker) => {
   const contact_uri = decodeContactUri(uriRaw);
   const customData = makeCustomColumnData(schema, worker);
   const row = {
-    sid, agent_name, activity_str, activityAge, contact_uri, formatted_age, tasks_str, skills_str,
+    sid, agent_name, activity_name, activity_str, activityAge, contact_uri, formatted_age, tasks_str, skills_str,
     ...customData
   };
-  console.log('-----------formatRow.worker: returning:', row);
+  //console.log('-----------formatRow.worker: returning:', row);
   return row;
 });
-
-const decodeContactUri = (uri) => uri.replace('_2B', '+').replace('_40', '@').replace('_2E', '.');
 
 export default function WorkersTable(props) {
   const {workers, tasks, query, schema} = props;

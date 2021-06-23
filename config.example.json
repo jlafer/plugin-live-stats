@@ -1,0 +1,51 @@
+{
+  "workers": {
+    "columns": [
+      {"id": "agent_name"},
+      {"id": "activity_str"},
+      {"id": "formatted_age"},
+      {"id": "tasks_str"},
+      {"id": "skills_str", "label": "Skill Set"},
+      {"id": "team", "numeric": false, "disablePadding": false, "label": "Team", "field": "attributes.team"},
+      {"id": "contact_uri"}
+    ],
+    "filterDefns": [
+      {
+        "name": "team", "label": "Team", "field": "attributes.team", "defaultOption": "Blue",
+        "options": [
+          {"label": "All", "name": "All"},
+          {"label": "Red", "name": "Red"},
+          {"label": "Blue", "name": "Blue"},
+          {"label": "Green", "name": "Green"},
+          {"label": "Yellow", "name": "Yellow"}
+        ]
+      }
+    ]
+  },
+  "tasks": {
+    "columns": [
+      {"id": "from"},
+      {"id": "status"},
+      {"id": "queue_name"},
+      {"id": "formatted_age"},
+      {"id": "channel_type"},
+      {"id": "worker_name"},
+      {"id": "topic", "numeric": false, "disablePadding": false, "label": "Topic", "field": "attributes.topic"}
+    ],
+    "filterDefns": [
+      {
+        "name": "topic", "label": "Topic", "field": "attributes.topic", "defaultOption": "All",
+        "options": [
+          {"label": "All", "name": "All"},
+          {"label": "Checking", "name": "Checking"},
+          {"label": "Credit Card", "name": "CreditCard"},
+          {"label": "Mortgages", "name": "Mortgages"},
+          {"label": "Loans", "name": "Loans"},
+          {"label": "Mobile App", "name": "MobileApp"},
+          {"label": "Website", "name": "Website"}
+        ]
+      }
+    ],
+    "defaultSortCol": "channel_type"
+  }
+}
