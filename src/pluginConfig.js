@@ -67,12 +67,14 @@ const verifyAndFillColumn = (col) => {
 };
 
 const verifyAndFillFilterDefn = (defn) => {
+  console.log('-----------------verifyAndFillFilterDefn: defn', defn);
   requiredProp('filterDefn', defn, 'name');
   requiredProp('filterDefn', defn, 'label');
   requiredProp('filterDefn', defn, 'field');
   requiredProp('filterDefn', defn, 'options');
-  const defaultOption = optionalProp('filterDefn', defn, 'defaultOption', {defaultValue: 'All'});
-  // TODO we could extract values from options and verify defaultOption is in the list
+  const optionValues = R.map(R.prop('name'), defn.options);
+  const defaultValue = R.includes('All', optionValues) ? 'All' : R.head(optionValues);
+  const defaultOption = optionalProp('filterDefn', defn, 'defaultOption', {defaultValue, validValues: optionValues});
   return {...defn, defaultOption};
 };
 
@@ -100,7 +102,7 @@ const getAltValue = (options) => {
 const validValue = (value, options) => {
   if (!options)
     return true;
-  return ( !options.validValues || R.includes(value, options.validValues) || value === 'All' )
+  return ( !options.validValues || R.includes(value, options.validValues) )
 };
 
 const nameToNameAndLabelObj = (name, nameToLabelFn) => {

@@ -34,9 +34,8 @@
     ],
     "filterDefns": [
       {
-        "name": "topic", "label": "Topic", "field": "attributes.topic", "defaultOption": "All",
+        "name": "topic", "label": "Topic", "field": "attributes.topic",
         "options": [
-          {"label": "All", "name": "All"},
           {"label": "Checking", "name": "Checking"},
           {"label": "Credit Card", "name": "CreditCard"},
           {"label": "Mortgages", "name": "Mortgages"},

@@ -1,9 +1,7 @@
 # Live Stats Plugin for Twilio Flex
-
 This is a demo-grade Flex Plugin to demonstrate the presentation of realtime status and statistics for agents and tasks. It uses the [LiveQuery API](https://www.twilio.com/docs/flex/developer/ui/manager#insightsclient) to access the data and receive event-driven updates. It presents data for Flex Tasks and Workers in separate tables.
 
 ## Setup
-
 Make sure you have [Node.js](https://nodejs.org) as well as [`npm`](https://npmjs.com). We support Node >= 12 (and recommend the _even_ versions of Node). Afterwards, install the dependencies by running `npm install`:
 
 ```bash
@@ -75,7 +73,7 @@ A `column_defn` for a custom column has the following syntax:
 - The `numeric` property specifies whether the column contains numeric data. This sets whether the column values are left- or right-justified.
 - The `disablePadding` property specifies whether the column values are padded by Material `TableCell` component.
 - The `label` property supplies the column heading label.
-- The `field` property specifies the source of data values. Normally, this will look like `attributes.team` to get data from a Task or Worker attribute.
+- The `field` property specifies the source of data values. To display a Task or Worker attribute, the format is `attributes.<attribute_name>` .
 
 The plugin comes with standard filters: on `status` for tasks and on `activity_name` for workers. Custom filters can also be supplied. A `filter_defn` has the following syntax:
 ```bash
@@ -83,16 +81,16 @@ The plugin comes with standard filters: on `status` for tasks and on `activity_n
     name: <string>,
     label: <string>,
     field: <path-string>,
-    defaultOption: <string>,
-    options: [<option_defn>...]
+    options: [<option_defn>...],
+    defaultOption: <string>
   }
 ```
 
 - The `name` property uniquely identifies the filter's dropdown menu control.
 - The `label` property supplies the dropdown menu's label.
-- The `field` property specifies the source of data values used for filtering the rows displayed in the table. Normally, this will look like `attributes.team` to use data from a Task or Worker attribute.
-- The `defaultOption` property specifies the default data value for the filter. If not specified, the filter will start deactivated (i.e., value `All`).
+- The `field` property specifies the source of data values used for filtering the rows displayed in the table. To filter on a Task or Worker attribute, the format is `attributes.<attribute_name>`.
 - The `options` property supplies the list of values for the dropdown menu. Each value has the `option_defn` syntax: `{name: <string>, label: <string>}`. The `name` values are used in comparisons with the data.
+- The `defaultOption` property specifies the default value for the filter. If not specified, the filter will start deactivated if `All` is a valid option and will be set to use the first option in the `options` list if not.
 
 ### Updating the Flex Service Configuration Object
 You can update the Flex service configuration using the Flex API as described [here](https://www.twilio.com/docs/flex/ui/configuration#modifying-configuration-for-flextwiliocom). As described in that document, other plugins' configuration data should be preserved by first issuing a GET for the `attributes` data, editing the result to add in the `plugin_live_stats` property, and then issuing a POST with the edited result, as shown below using `curl`.
